@@ -1,5 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { useAccount, useConnect } from "wagmi";
+import { injected } from "wagmi/connectors";
 
 const FloatingElement: React.FC<{
   className: string;
@@ -26,6 +29,25 @@ const FloatingElement: React.FC<{
 );
 
 const Hero: React.FC = () => {
+  const navigate = useNavigate();
+  const { isConnected } = useAccount();
+  const { connect, isPending: isConnecting } = useConnect();
+
+  const handleConnect = async () => {
+    try {
+      await connect({ connector: injected() });
+    } catch (err) {
+      console.error("Failed to connect:", err);
+    }
+  };
+
+  // Redirect to dashboard when connected
+  React.useEffect(() => {
+    if (isConnected) {
+      navigate('/dashboard');
+    }
+  }, [isConnected, navigate]);
+
   return (
     <section className="relative min-h-screen bg-black overflow-hidden">
       {/* Animated Background Graphics */}
@@ -55,7 +77,7 @@ const Hero: React.FC = () => {
       <div className="absolute inset-0 pointer-events-none">
         {/* Animated Pizza */}
         <FloatingElement
-          className="absolute top-24 right-[20%] w-24 h-24 bg-gradient-to-br from-orange-500/20 to-red-600/20 rounded-xl border border-orange-500/30 flex items-center justify-center"
+          className="absolute top-24 right-[20%] w-24 h-24 bg-gradient-to-br from-neon-blue/20 to-neon-green/20 rounded-xl border border-neon-blue/30 flex items-center justify-center"
           delay={0}
         >
           <svg viewBox="0 0 64 64" className="w-16 h-16">
@@ -63,9 +85,9 @@ const Hero: React.FC = () => {
               cx="32"
               cy="32"
               r="25"
-              fill="#FFA500"
+              fill={`#00f2fe`}
               fillOpacity="0.2"
-              stroke="#FF6B6B"
+              stroke={`#00f2fe`}
               strokeWidth="2"
             />
             <path
@@ -252,18 +274,16 @@ const Hero: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, delay: 0.8 }}
           >
-            <button className="group relative px-8 py-4 bg-transparent border-2 border-neon-blue text-neon-blue font-bold rounded-full transition-all duration-300 transform hover:scale-105 hover:bg-neon-blue hover:text-black">
-              <span className="relative z-10">Connect Wallet</span>
-              <motion.div
-                className="absolute inset-0 rounded-full bg-gradient-to-r from-neon-blue via-neon-green to-neon-blue opacity-0 group-hover:opacity-100"
-                animate={{
-                  backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
+            <button 
+              onClick={handleConnect}
+              disabled={isConnecting}
+              className="group relative px-8 py-4 bg-transparent border-2 border-neon-blue text-neon-blue font-bold rounded-full transition-all duration-300 transform hover:scale-105 hover:bg-neon-blue hover:text-black disabled:opacity-50"
+            >
+              <span className="relative z-10">
+                {isConnecting ? "Connecting..." : "Connect Wallet"}
+              </span>
+              <motion.div 
+                className="absolute inset-0 rounded-full bg-gradient-to-r from-neon-blue via-neon-green to-neon-blue opacity-0 group-hover:opacity-100" 
               />
             </button>
             <button className="px-8 py-4 border-2 border-neon-blue text-neon-blue font-bold rounded-full hover:bg-neon-blue/10 transition-all transform hover:scale-105">

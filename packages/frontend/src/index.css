@@ -5,16 +5,93 @@
 @tailwind components;
 @tailwind utilities;
 
-/* You can keep custom styles below if needed */
 :root {
   font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #111827; /* dark-primary */
+  background-color: #000000; /* dark-primary */
   color: #f3f4f6; /* text-gray-100 */
 }
 
+body {
+  @apply bg-black dark:bg-black m-0 min-h-screen text-light-gray transition-colors;
+  /* font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; */
+}
+
+@layer base {
+  button {
+    @apply border-0 cursor-pointer;
+  }
+
+  button:focus,
+  button:focus-visible {
+    @apply outline-none ring-2 ring-neon-blue ring-opacity-50;
+  }
+}
+
 ::selection {
-  background-color: #3b82f6;
-  color: white;
+  background-color: #00f2fe; /* neon-blue */
+  color: black;
+}
+
+@keyframes typingAnimation {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0px); }
+}
+
+.typing-dot {
+  @apply w-2 h-2 bg-neon-blue rounded-full shadow-lg;
+  animation: typingAnimation 1s infinite;
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.4); /* neon-blue */
+}
+
+.typing-dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-dark-secondary;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-neon-blue/20 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-neon-blue/40;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 242, 254, 0.2) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 242, 254, 0.2);
+  border-radius: 3px;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 242, 254, 0.3);
 }
