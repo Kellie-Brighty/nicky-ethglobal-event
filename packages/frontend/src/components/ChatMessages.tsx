@@ -17,7 +17,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages }) => {
           }`}
         >
           {message.role === "assistant" && (
-            <div className="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center flex-shrink-0 mb-2">
+            <div className="w-8 h-8 rounded-full bg-neon-blue flex items-center justify-center flex-shrink-0 mb-2">
               <span className="text-sm">🍳</span>
             </div>
           )}
@@ -30,8 +30,8 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages }) => {
             <div
               className={`p-4 rounded-2xl ${
                 message.role === "assistant"
-                  ? "bg-gray-800 dark:bg-gray-700 text-gray-100 shadow-lg border border-gray-700/50"
-                  : "bg-gradient-to-br from-orange-500 to-rose-500 text-[#fff] shadow-lg"
+                  ? "bg-dark-secondary text-light-gray shadow-lg border border-neon-blue/20"
+                  : "bg-gradient-to-br from-neon-blue to-neon-green text-black shadow-lg"
               }`}
             >
               {message.role === "assistant" && message.imageUrl && (
@@ -56,8 +56,8 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages }) => {
             <div
               className={`absolute bottom-[6px] ${
                 message.role === "assistant"
-                  ? "left-[-6px] border-l-gray-800 dark:border-l-gray-700"
-                  : "right-[-6px] border-r-orange-500"
+                  ? "left-[-6px] border-l-dark-secondary"
+                  : "right-[-6px] border-r-neon-blue"
               } border-8 border-transparent`}
             />
 
@@ -75,7 +75,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages }) => {
           </div>
 
           {message.role === "user" && (
-            <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center flex-shrink-0 mb-2">
+            <div className="w-8 h-8 rounded-full bg-neon-green/80 flex items-center justify-center flex-shrink-0 mb-2">
               <span className="text-sm">👤</span>
             </div>
           )}

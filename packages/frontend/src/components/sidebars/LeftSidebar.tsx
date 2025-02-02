@@ -68,198 +68,68 @@ export const LeftSidebar = () => {
       <div className="p-6 space-y-8">
         {/* Order History Section */}
         <div>
-          <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200 flex items-center gap-2">
-            <ClockIcon className="w-5 h-5 text-orange-500" />
+          <h2 className="text-lg font-semibold mb-4 text-light-gray flex items-center gap-2">
+            <ClockIcon className="w-5 h-5 text-neon-blue" />
             Order History
           </h2>
           <div className="space-y-3">
-            {/* Sample Order Items */}
-            <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer">
+            <div className="p-3 rounded-lg bg-dark-secondary/50 hover:bg-dark-secondary transition-colors cursor-pointer border border-neon-blue/10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-neon-blue/10 flex items-center justify-center">
                     🍕
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-800 dark:text-gray-200">
-                      Pizza Order
-                    </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <h3 className="font-medium text-light-gray">Pizza Order</h3>
+                    <p className="text-sm text-neon-blue/60">
                       2 items • $24.99
                     </p>
                   </div>
                 </div>
-                <span className="text-xs text-gray-500 dark:text-gray-400">
-                  2h ago
-                </span>
+                <span className="text-xs text-neon-blue/60">2h ago</span>
               </div>
             </div>
-            {/* More order items... */}
           </div>
         </div>
 
         {/* Quick Actions Section */}
         <div>
-          <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200 flex items-center gap-2">
-            <BoltIcon className="w-5 h-5 text-orange-500" />
+          <h2 className="text-lg font-semibold mb-4 text-light-gray flex items-center gap-2">
+            <BoltIcon className="w-5 h-5 text-neon-blue" />
             Quick Actions
           </h2>
           <div className="space-y-2">
-            <button className="w-full px-4 py-3 text-left rounded-lg bg-orange-50 dark:bg-orange-900/20 hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors flex items-center gap-3 group">
-              <ShoppingBagIcon className="w-5 h-5 text-orange-600 dark:text-orange-400" />
-              <span className="text-gray-800 dark:text-gray-200 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+            <button className="w-full px-4 py-3 text-left rounded-lg bg-dark-secondary/50 hover:bg-dark-secondary transition-colors border border-neon-blue/10 flex items-center gap-3 group">
+              <ShoppingBagIcon className="w-5 h-5 text-neon-blue group-hover:text-neon-green transition-colors" />
+              <span className="text-light-gray group-hover:text-neon-green transition-colors">
                 Go to Marketplace
               </span>
             </button>
-            <div className="relative">
-              <button
-                className="w-full px-4 py-3 text-left rounded-lg bg-orange-50 dark:bg-orange-900/20 hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors flex items-center gap-3 group"
-                onClick={() => setShowFavorites(!showFavorites)}
-              >
-                <HeartIcon
-                  className={`w-5 h-5 text-orange-600 dark:text-orange-400 transition-transform ${
-                    showFavorites ? "scale-110" : ""
-                  }`}
-                />
-                <span className="text-gray-800 dark:text-gray-200 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                  View Favorites
-                </span>
-              </button>
-
-              <AnimatePresence>
-                {showFavorites && (
-                  <>
-                    {/* Overlay - only show on mobile */}
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[60] lg:hidden"
-                      onClick={() => setShowFavorites(false)}
-                    />
-                    <motion.div
-                      ref={popupRef}
-                      initial={{ opacity: 0, scale: 0.9, y: -20 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.9, y: -20 }}
-                      transition={{
-                        type: "spring",
-                        bounce: 0.3,
-                        duration: 0.6,
-                      }}
-                      className={`
-                        fixed w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl 
-                        border border-gray-200 dark:border-gray-700 p-4 z-[70]
-                        lg:fixed lg:left-0 lg:top-16 lg:bottom-0 lg:w-[280px] lg:rounded-none lg:border-0
-                        lg:bg-white dark:lg:bg-gray-800
-                        ${
-                          !showFavorites
-                            ? "translate-x-full lg:translate-x-0"
-                            : "translate-x-0"
-                        }
-                        left-[300px] top-1/2 -translate-y-1/2
-                        lg:translate-y-0
-                      `}
-                    >
-                      {/* Add a backdrop blur overlay for the sidebar on desktop */}
-                      <div className="hidden lg:block fixed left-0 top-16 bottom-0 w-[280px] bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm -z-10" />
-
-                      {/* Rest of the popup content */}
-                      <div className="relative z-10 h-full overflow-y-auto">
-                        <div className="flex items-center justify-between mb-4">
-                          <h3 className="font-medium text-lg">
-                            Your Favorite Meals
-                          </h3>
-                          <button
-                            onClick={() => setShowFavorites(false)}
-                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-                          >
-                            <XMarkIcon className="w-5 h-5" />
-                          </button>
-                        </div>
-
-                        {favorites.length === 0 ? (
-                          <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="text-center py-8"
-                          >
-                            <div className="mb-4 flex justify-center">
-                              <HeartIcon className="w-16 h-16 text-gray-300 dark:text-gray-600" />
-                            </div>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                              No favorites yet
-                            </p>
-                            <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-                              Your favorite meals will appear here
-                            </p>
-                          </motion.div>
-                        ) : (
-                          <div className="space-y-3 max-h-[60vh] overflow-y-auto custom-scrollbar">
-                            {favorites.map((meal, index) => (
-                              <motion.div
-                                key={meal.id}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: index * 0.1 }}
-                                className="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors group cursor-pointer"
-                              >
-                                <div className="relative">
-                                  {meal.imageUrl && (
-                                    <img
-                                      src={meal.imageUrl}
-                                      alt={meal.name}
-                                      className="w-16 h-16 rounded-lg object-cover"
-                                    />
-                                  )}
-                                  {meal.rating && (
-                                    <div className="absolute -top-2 -right-2 bg-orange-500 text-white rounded-full p-1 flex items-center gap-0.5 text-xs">
-                                      <StarIcon className="w-3 h-3" />
-                                      {meal.rating}
-                                    </div>
-                                  )}
-                                </div>
-                                <div className="flex-1">
-                                  <h4 className="font-medium text-sm group-hover:text-orange-500 transition-colors">
-                                    {meal.name}
-                                  </h4>
-                                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                                    {meal.price}
-                                  </p>
-                                </div>
-                              </motion.div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </motion.div>
-                  </>
-                )}
-              </AnimatePresence>
-            </div>
+            <button className="w-full px-4 py-3 text-left rounded-lg bg-dark-secondary/50 hover:bg-dark-secondary transition-colors border border-neon-blue/10 flex items-center gap-3 group">
+              <HeartIcon className="w-5 h-5 text-neon-blue group-hover:text-neon-green transition-colors" />
+              <span className="text-light-gray group-hover:text-neon-green transition-colors">
+                View Favorites
+              </span>
+            </button>
           </div>
         </div>
 
         {/* Preferences Section */}
         <div>
-          <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200 flex items-center gap-2">
-            <AdjustmentsHorizontalIcon className="w-5 h-5 text-orange-500" />
+          <h2 className="text-lg font-semibold mb-4 text-light-gray flex items-center gap-2">
+            <AdjustmentsHorizontalIcon className="w-5 h-5 text-neon-blue" />
             Preferences
           </h2>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
-              <span className="text-gray-700 dark:text-gray-300">
-                Dietary Restrictions
-              </span>
-              <button className="text-orange-500 hover:text-orange-600 dark:text-orange-400">
+            <div className="flex items-center justify-between p-3 rounded-lg bg-dark-secondary/50 border border-neon-blue/10">
+              <span className="text-light-gray">Dietary Restrictions</span>
+              <button className="text-neon-blue hover:text-neon-green transition-colors">
                 Edit
               </button>
             </div>
-            <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50">
-              <span className="text-gray-700 dark:text-gray-300">
-                Cuisine Preferences
-              </span>
-              <button className="text-orange-500 hover:text-orange-600 dark:text-orange-400">
+            <div className="flex items-center justify-between p-3 rounded-lg bg-dark-secondary/50 border border-neon-blue/10">
+              <span className="text-light-gray">Cuisine Preferences</span>
+              <button className="text-neon-blue hover:text-neon-green transition-colors">
                 Edit
               </button>
             </div>

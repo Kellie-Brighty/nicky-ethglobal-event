@@ -35,7 +35,7 @@ const DashboardLayout = () => {
   };
 
   return (
-    <div className="h-screen w-full bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex flex-col overflow-hidden">
+    <div className="h-screen w-full bg-gradient-to-br from-black to-dark-secondary flex flex-col overflow-hidden">
       {/* Fixed Header */}
       <div className="fixed top-0 left-0 right-0 z-50">
         <WalletHeader />
@@ -58,20 +58,20 @@ const DashboardLayout = () => {
             transform transition-transform duration-300 ease-in-out
             ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}
             lg:relative lg:transform-none lg:z-0 lg:mt-0
-            bg-white dark:bg-gray-800/50 backdrop-blur-lg
-            border-r border-gray-200/50 dark:border-gray-700/50
+            bg-dark-secondary/50 backdrop-blur-lg
+            border-r border-neon-blue/10
           `}
         >
           <LeftSidebar />
         </div>
 
         {/* Main Chat Area */}
-        <div className="flex-1 h-[calc(100vh-4rem)] bg-white/50 dark:bg-gray-800/30 backdrop-blur-sm">
+        <div className="flex-1 h-[calc(100vh-4rem)] bg-dark-secondary/30 backdrop-blur-sm">
           <ChatInterface />
         </div>
 
         {/* Right Sidebar */}
-        <div className="hidden lg:block border-l border-gray-200/50 dark:border-gray-700/50 bg-white/50 dark:bg-gray-800/30 backdrop-blur-lg">
+        <div className="hidden lg:block border-l border-neon-blue/10 bg-dark-secondary/30 backdrop-blur-lg">
           <RightSidebar />
         </div>
       </div>

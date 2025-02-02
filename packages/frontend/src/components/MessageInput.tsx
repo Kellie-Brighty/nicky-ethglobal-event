@@ -24,21 +24,21 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSend, isLoading }) => {
         value={input}
         onChange={(e) => setInput(e.target.value)}
         placeholder="Ask about food, recipes, or nutrition..."
-        className="flex-1 p-3 rounded-full bg-gray-700 border border-gray-600 text-gray-100 placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+        className="flex-1 p-3 rounded-full bg-dark-secondary border border-neon-blue/20 text-light-gray placeholder-gray-400 focus:outline-none focus:border-neon-blue focus:ring-1 focus:ring-neon-blue"
         disabled={isLoading}
       />
       <button
         type="button"
-        className="p-3 rounded-full bg-gray-700 hover:bg-gray-600 transition-colors border border-gray-600"
+        className="p-3 rounded-full bg-dark-secondary hover:bg-dark-secondary/80 transition-colors border border-neon-blue/20"
       >
-        <MicrophoneIcon className="w-6 h-6 text-gray-300" />
+        <MicrophoneIcon className="w-6 h-6 text-neon-blue" />
       </button>
       <button
         type="submit"
         disabled={isLoading}
-        className="p-3 rounded-full bg-orange-600 hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:hover:bg-orange-600"
+        className="p-3 rounded-full bg-neon-blue hover:bg-neon-blue/80 transition-colors disabled:opacity-50 disabled:hover:bg-neon-blue text-black"
       >
-        <PaperAirplaneIcon className="w-6 h-6 text-white" />
+        <PaperAirplaneIcon className="w-6 h-6" />
       </button>
     </form>
   );

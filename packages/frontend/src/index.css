@@ -1,12 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply bg-white dark:bg-gray-900 m-0 min-h-screen text-gray-900 dark:text-gray-100 transition-colors;
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+:root {
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #000000; /* dark-primary */
+  color: #f3f4f6; /* text-gray-100 */
+}
+
+body {
+  @apply bg-black dark:bg-black m-0 min-h-screen text-light-gray transition-colors;
+  /* font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; */
 }
 
 @layer base {
@@ -16,8 +25,13 @@ body {
 
   button:focus,
   button:focus-visible {
-    @apply outline-none ring-2 ring-orange-500 ring-opacity-50;
+    @apply outline-none ring-2 ring-neon-blue ring-opacity-50;
   }
+}
+
+::selection {
+  background-color: #00f2fe; /* neon-blue */
+  color: black;
 }
 
 @keyframes typingAnimation {
@@ -27,9 +41,9 @@ body {
 }
 
 .typing-dot {
-  @apply w-2 h-2 bg-orange-500 rounded-full shadow-lg;
+  @apply w-2 h-2 bg-neon-blue rounded-full shadow-lg;
   animation: typingAnimation 1s infinite;
-  box-shadow: 0 0 10px rgba(249, 115, 22, 0.4);
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.4); /* neon-blue */
 }
 
 .typing-dot:nth-child(1) {
@@ -49,20 +63,20 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-800;
+  @apply bg-dark-secondary;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-600 rounded-full;
+  @apply bg-neon-blue/20 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-500;
+  @apply bg-neon-blue/40;
 }
 
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  scrollbar-color: rgba(0, 242, 254, 0.2) transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -74,10 +88,10 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 242, 254, 0.2);
   border-radius: 3px;
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(0, 242, 254, 0.3);
 }

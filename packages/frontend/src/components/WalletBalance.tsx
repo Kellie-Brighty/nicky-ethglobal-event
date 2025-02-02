@@ -4,16 +4,25 @@ export const WalletBalance = () => {
   const { address } = useAccount();
   const { data: balance } = useBalance({ address });
 
-  if (!address || !balance) return null;
+  if (!address) {
+    return (
+      <div className="mb-6 p-4 rounded-lg bg-dark-secondary border border-neon-blue/10">
+        <h2 className="text-lg font-semibold mb-2 text-light-gray">Wallet</h2>
+        <p className="text-sm text-neon-blue/60">Please connect your wallet</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-3 rounded-lg bg-orange-50 dark:bg-orange-900/20 mb-4">
-      <div className="text-sm text-gray-500 dark:text-gray-400">Wallet Balance</div>
-      <div className="font-medium text-gray-800 dark:text-gray-200 flex items-center gap-2">
-        <span className="text-orange-500">
-          {parseFloat(balance.formatted).toFixed(4)}
+    <div className="mb-6 p-4 rounded-lg bg-dark-secondary border border-neon-blue/10">
+      <h2 className="text-lg font-semibold mb-2 text-light-gray">Wallet Balance</h2>
+      <div className="flex items-center justify-between">
+        <span className="text-neon-blue font-mono">
+          {balance?.formatted || "0"} {balance?.symbol}
         </span>
-        <span>{balance.symbol}</span>
+        <button className="text-sm text-neon-green hover:text-neon-blue transition-colors">
+          Add Funds
+        </button>
       </div>
     </div>
   );
