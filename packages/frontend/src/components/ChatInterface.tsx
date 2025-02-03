@@ -1,8 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import OpenAI from "openai";
 import ChatMessages from "./ChatMessages";
 import MessageInput from "./MessageInput";
-import { Message } from "../types";
 import { getOrCreateThread } from "../utils/threadManager";
 import { createAndManageRun } from "../utils/runManager";
 import { createAssistant } from "../openai_folder/createAssistant";
@@ -52,10 +51,16 @@ const ChatInterface = () => {
               .reverse()
               .map((msg) => ({
                 role: msg.role,
-                content: msg.content[0].text.value,
+                content:
+                  msg.content[0].type === "text"
+                    ? msg.content[0].text.value
+                    : "Image message",
                 id: msg.id,
                 timestamp: new Date(msg.created_at * 1000).getTime(),
-                imageUrl: msg.content[0].image_url,
+                imageUrl:
+                  msg.content[0].type === "image_file"
+                    ? msg.content[0].image_file.file_id
+                    : undefined,
               }))
           );
         } catch (error) {
@@ -83,19 +88,25 @@ const ChatInterface = () => {
     if (!message.trim()) return;
 
     // Add user message immediately
-    setMessages(prev => [...prev, {
-      role: "user",
-      content: message,
-      id: Date.now().toString(),
-      timestamp: Date.now(),
-    }]);
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "user",
+        content: message,
+        id: Date.now().toString(),
+        timestamp: Date.now(),
+      },
+    ]);
 
     setIsLoading(true);
     setIsTyping(true);
 
     try {
       // If message contains image generation request
-      if (message.toLowerCase().includes("generate image") || message.toLowerCase().includes("create image")) {
+      if (
+        message.toLowerCase().includes("generate image") ||
+        message.toLowerCase().includes("create image")
+      ) {
         const response = await client.images.generate({
           model: "dall-e-3",
           prompt: message,
@@ -106,19 +117,26 @@ const ChatInterface = () => {
 
         // Store the image URL from DALL-E
         const imageUrl = response.data[0].url;
-        
+
         // Add assistant response with image
-        setMessages(prev => [...prev, {
-          role: "assistant",
-          content: "Here's your generated image:",
-          id: (Date.now() + 1).toString(),
-          timestamp: Date.now(),
-          imageUrl: imageUrl,
-        }]);
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: "Here's your generated image:",
+            id: (Date.now() + 1).toString(),
+            timestamp: Date.now(),
+            imageUrl: imageUrl,
+          },
+        ]);
       } else {
         const assistant = await createAssistant(client);
         const thread = await getOrCreateThread(client, message);
-        const aiResponse = await createAndManageRun(client, thread, assistant.id);
+        const aiResponse = await createAndManageRun(
+          client,
+          thread,
+          assistant.id
+        );
 
         let content = "";
         let imageUrl = undefined;

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+// import React, { useState } from "react";
 import { WalletHeader } from "../components/WalletHeader";
 import RightSidebar from "../components/sidebars/RightSidebar";
 import LeftSidebar from "../components/sidebars/LeftSidebar";
@@ -6,33 +6,20 @@ import ChatInterface from "../components/ChatInterface";
 import { useMobileMenu } from "../context/MobileMenuContext";
 
 const DashboardLayout = () => {
-  const { isMenuOpen, closeMenu, toggleMenu } = useMobileMenu();
-  const touchStart = useRef(0);
-  const threshold = 50; // minimum distance for swipe
+  const { isMenuOpen, closeMenu } = useMobileMenu();
+  // const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStart.current = e.touches[0].clientX;
-  };
+  // const handleTouchStart = (e: React.TouchEvent) => {
+  //   // Implementation of handleTouchStart
+  // };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!touchStart.current) return;
+  // const handleTouchMove = (e: React.TouchEvent) => {
+  //   // Implementation of handleTouchMove
+  // };
 
-    const currentX = e.touches[0].clientX;
-    const diff = touchStart.current - currentX;
-
-    // Swipe right to open menu (when closed)
-    if (diff < -threshold && !isMenuOpen) {
-      toggleMenu();
-    }
-    // Swipe left to close menu (when open)
-    else if (diff > threshold && isMenuOpen) {
-      closeMenu();
-    }
-  };
-
-  const handleTouchEnd = () => {
-    touchStart.current = 0;
-  };
+  // const handleTouchEnd = () => {
+  //   // Implementation of handleTouchEnd
+  // };
 
   return (
     <div className="h-screen w-full bg-gradient-to-br from-black to-dark-secondary flex flex-col overflow-hidden">

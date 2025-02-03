@@ -1,13 +1,16 @@
-import { useState, useCallback, useEffect } from "react";
-import { createPublicClient, http } from "viem";
-import { mainnet } from "viem/chains";
+import { useAccount, useBalance, useChainId } from "wagmi";
 
-export interface WalletState {
-  address: string | null;
-  balance: string | null;
-  chainId: number | null;
-  isConnecting: boolean;
-  error: string | null;
+export function useWallet() {
+  const { address, isConnected } = useAccount();
+  const { data: balance } = useBalance({ address });
+  const chainId = useChainId();
+
+  return {
+    isConnected,
+    address,
+    balance: balance?.formatted || "0",
+    chainId: chainId || 0,
+  };
 }
 
-// Rest of the file can be removed since we're using wagmi hooks now
+export type WalletState = ReturnType<typeof useWallet>;
