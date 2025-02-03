@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { useMobileMenu } from "../context/MobileMenuContext";
-import { useAccount, useBalance, useDisconnect } from "wagmi";
+import { useAccount, useDisconnect } from "wagmi";
 import { useConfig } from "wagmi";
 import { useNavigate } from "react-router-dom";
 
@@ -11,14 +11,12 @@ export const WalletHeader = () => {
   const { toggleMenu } = useMobileMenu();
   const config = useConfig();
   const { address } = useAccount();
-  const { data: balance } = useBalance({ address });
-  const chain = config.chains[0];
   const { disconnect } = useDisconnect();
   const navigate = useNavigate();
 
   const handleDisconnect = () => {
     disconnect();
-    navigate('/');
+    navigate("/");
   };
 
   return (
@@ -54,7 +52,8 @@ export const WalletHeader = () => {
                 <div className="px-4 py-2 border-b border-neon-blue/20">
                   <div className="text-sm text-neon-blue/60">Network</div>
                   <div className="font-medium text-light-gray">
-                    {chain?.name || `Chain ID: ${chain?.id}`}
+                    {config.chains[0]?.name ||
+                      `Chain ID: ${config.chains[0]?.id}`}
                   </div>
                 </div>
                 <button

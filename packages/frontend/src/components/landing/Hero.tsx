@@ -1,8 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useAccount, useConnect } from "wagmi";
-import { injected } from "wagmi/connectors";
+import { useAccount } from "wagmi";
+import { useWeb3Modal } from "@web3modal/wagmi/react";
 
 const FloatingElement: React.FC<{
   className: string;
@@ -31,11 +31,11 @@ const FloatingElement: React.FC<{
 const Hero: React.FC = () => {
   const navigate = useNavigate();
   const { isConnected } = useAccount();
-  const { connect, isPending: isConnecting } = useConnect();
+  const { open } = useWeb3Modal();
 
   const handleConnect = async () => {
     try {
-      await connect({ connector: injected() });
+      await open();
     } catch (err) {
       console.error("Failed to connect:", err);
     }
@@ -44,7 +44,7 @@ const Hero: React.FC = () => {
   // Redirect to dashboard when connected
   React.useEffect(() => {
     if (isConnected) {
-      navigate('/dashboard');
+      navigate("/dashboard");
     }
   }, [isConnected, navigate]);
 
@@ -274,21 +274,16 @@ const Hero: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, delay: 0.8 }}
           >
-            <button 
+            <button
               onClick={handleConnect}
-              disabled={isConnecting}
               className="group relative px-8 py-4 bg-transparent border-2 border-neon-blue text-neon-blue font-bold rounded-full transition-all duration-300 transform hover:scale-105 hover:bg-neon-blue hover:text-black disabled:opacity-50"
             >
-              <span className="relative z-10">
-                {isConnecting ? "Connecting..." : "Connect Wallet"}
-              </span>
-              <motion.div 
-                className="absolute inset-0 rounded-full bg-gradient-to-r from-neon-blue via-neon-green to-neon-blue opacity-0 group-hover:opacity-100" 
-              />
+              <span className="relative z-10">Connect Wallet</span>
+              <motion.div className="absolute inset-0 rounded-full bg-gradient-to-r from-neon-blue via-neon-green to-neon-blue opacity-0 group-hover:opacity-100" />
             </button>
-            <button className="px-8 py-4 border-2 border-neon-blue text-neon-blue font-bold rounded-full hover:bg-neon-blue/10 transition-all transform hover:scale-105">
+            {/* <button className="px-8 py-4 border-2 border-neon-blue text-neon-blue font-bold rounded-full hover:bg-neon-blue/10 transition-all transform hover:scale-105">
               Learn More
-            </button>
+            </button> */}
           </motion.div>
 
           {/* Floating tech elements */}
