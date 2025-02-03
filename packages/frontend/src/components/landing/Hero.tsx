@@ -67,7 +67,7 @@ const Hero: React.FC = () => {
       {/* Background Image with overlay */}
       <div
         className="absolute inset-0 bg-cover bg-center opacity-40"
-        style={{ backgroundImage: "url('/src/assets/images/hero-food.webp')" }}
+        style={{ backgroundImage: "url('/src/assets/images/hero-food.png')" }}
       />
 
       {/* Gradient overlay */}
