@@ -205,7 +205,7 @@ const Hero: React.FC = () => {
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            POWERED BY NICKY
+            POWERED BY NATA
           </motion.div>
 
           <motion.h1
@@ -215,7 +215,7 @@ const Hero: React.FC = () => {
             transition={{ duration: 1.2 }}
           >
             <span className="relative">
-              <span className="text-neon-blue relative z-10">Next-Gen</span>
+              <span className="text-neon-blue relative z-10">Trex-Food</span>
               <motion.span
                 className="absolute -inset-1 bg-neon-blue/20 blur-lg"
                 animate={{ opacity: [0.5, 1, 0.5] }}
