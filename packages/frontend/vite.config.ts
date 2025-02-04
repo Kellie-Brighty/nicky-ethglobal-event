@@ -10,5 +10,5 @@ export default defineConfig({
   define: {
     // This is needed for OpenAI to work in Vite
     global: "globalThis",
-  },
+  }
 });

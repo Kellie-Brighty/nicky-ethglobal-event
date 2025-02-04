@@ -9,7 +9,29 @@ import {
   ShoppingBagIcon,
   AdjustmentsHorizontalIcon,
   XMarkIcon,
+  HomeIcon,
+  UserIcon,
+  Cog6ToothIcon,
+  ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
+import { useNavigate } from "react-router-dom";
+import { useTheme } from "../../context/ThemeContext";
+import { format } from "date-fns";
+
+// Add type for mood
+interface Mood {
+  emoji: string;
+  label: string;
+  color: string;
+}
+
+const moods = [
+  { emoji: "😊", label: "Happy", color: "bg-green-400" },
+  { emoji: "😴", label: "Tired", color: "bg-blue-400" },
+  { emoji: "😔", label: "Sad", color: "bg-purple-400" },
+  { emoji: "😤", label: "Stressed", color: "bg-red-400" },
+  { emoji: "🤔", label: "Neutral", color: "bg-yellow-400" },
+];
 
 export const LeftSidebar = () => {
   const { closeMenu } = useMobileMenu();
@@ -18,24 +40,30 @@ export const LeftSidebar = () => {
   const { favorites } = useFavorites();
   const [showFavorites, setShowFavorites] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  const { theme } = useTheme();
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [selectedMood, setSelectedMood] = useState<Mood | null>(null);
+  const [startX, setStartX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    touchStart.current = e.touches[0].clientX;
+    setStartX(e.touches[0].clientX);
+    setIsDragging(true);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!touchStart.current) return;
-
+    if (!isDragging) return;
     const currentX = e.touches[0].clientX;
-    const diff = touchStart.current - currentX;
-
-    if (diff > threshold) {
-      closeMenu();
+    const diff = currentX - startX;
+    if (diff < -50) {
+      setShowFavorites(false);
+      setIsDragging(false);
     }
   };
 
   const handleTouchEnd = () => {
-    touchStart.current = 0;
+    setIsDragging(false);
   };
 
   // Close popup when clicking outside
@@ -53,42 +81,75 @@ export const LeftSidebar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <aside
-      className="h-full overflow-y-auto relative"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      className="h-full relative"
     >
-      <div className="p-6 space-y-8">
-        {/* Order History Section */}
-        <div>
-          <h2 className="text-lg font-semibold mb-4 text-light-gray flex items-center gap-2">
-            <ClockIcon className="w-5 h-5 text-neon-blue" />
-            Order History
-          </h2>
-          <div className="space-y-3">
-            <div className="p-3 rounded-lg bg-dark-secondary/50 hover:bg-dark-secondary transition-colors cursor-pointer border border-neon-blue/10">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-neon-blue/10 flex items-center justify-center">
-                    🍕
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-light-gray">Pizza Order</h3>
-                    <p className="text-sm text-neon-blue/60">
-                      2 items • $24.99
-                    </p>
-                  </div>
-                </div>
-                <span className="text-xs text-neon-blue/60">2h ago</span>
-              </div>
+      <div className="p-6 space-y-8 h-full overflow-y-scroll">
+        {/* New Time & Mood Section */}
+        <div className="border-t border-neon-blue/20 pt-6 ">
+          {/* Time Display */}
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-neon-blue">
+              {format(currentTime, "h:mm a")}
+            </h2>
+            <p className="text-light-gray">
+              Good {format(currentTime, "a") === "am" ? "Morning" : "Evening"}!
+            </p>
+          </div>
+
+          {/* Mood Selection */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-light-gray mb-4">
+              How are you feeling?
+            </h3>
+            <div className="grid grid-cols-3 gap-2">
+              {moods.map((mood) => (
+                <motion.button
+                  key={mood.label}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setSelectedMood(mood)}
+                  className={`p-2 rounded-lg ${
+                    selectedMood?.label === mood.label
+                      ? "bg-neon-blue/20 border-2 border-neon-blue"
+                      : "bg-dark-primary"
+                  }`}
+                >
+                  <div className="text-2xl mb-1">{mood.emoji}</div>
+                  <div className="text-xs text-light-gray">{mood.label}</div>
+                </motion.button>
+              ))}
             </div>
           </div>
-        </div>
 
+          {/* Meal Suggestions */}
+          {selectedMood && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <h3 className="text-lg font-semibold text-light-gray mb-4">
+                Recommended for you
+              </h3>
+              <div className="space-y-4">
+                {/* We'll add meal suggestions here */}
+              </div>
+            </motion.div>
+          )}
+        </div>
         {/* Quick Actions Section */}
-        <div>
+        <div className="h-full">
           <h2 className="text-lg font-semibold mb-4 text-light-gray flex items-center gap-2">
             <BoltIcon className="w-5 h-5 text-neon-blue" />
             Quick Actions
@@ -111,7 +172,6 @@ export const LeftSidebar = () => {
             </button>
           </div>
         </div>
-
         {/* Animated Favorites Modal */}
         <AnimatePresence>
           {showFavorites && (
@@ -206,9 +266,8 @@ export const LeftSidebar = () => {
             </motion.div>
           )}
         </AnimatePresence>
-
         {/* Preferences Section */}
-        <div>
+        {/* <div>
           <h2 className="text-lg font-semibold mb-4 text-light-gray flex items-center gap-2">
             <AdjustmentsHorizontalIcon className="w-5 h-5 text-neon-blue" />
             Preferences
@@ -227,7 +286,7 @@ export const LeftSidebar = () => {
               </button>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </aside>
   );
