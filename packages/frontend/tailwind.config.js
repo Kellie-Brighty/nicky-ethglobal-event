@@ -1,6 +1,10 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  darkMode: 'class', // This is important!
   theme: {
     extend: {
       fontFamily: {
@@ -9,16 +13,22 @@ module.exports = {
         body: ["Inter", "sans-serif"],
       },
       colors: {
+        // New neon theme colors
+        'neon-blue': '#00f2fe',
+        'neon-green': '#39ff14',
+        'light-gray': '#f3f4f6',
         dark: {
-          primary: "#111827", // Main background
-          secondary: "#221F2E", // Card background
-          accent: "#9A6FFE", // Purple accent
+          primary: '#000000',    // Pure black for deep contrast
+          secondary: '#111827',  // Dark background
+          accent: '#00f2fe',    // Using neon blue as accent
         },
-        primary: "#yourPrimaryColor", // Replace with your actual primary color
-        "neon-blue": "#00f2fe",
-        "neon-green": "#39ff14",
+      },
+      animation: {
+        'spin-slow': 'spin 20s linear infinite',
+        'ping-slow': 'ping 3s cubic-bezier(0, 0, 0.2, 1) infinite',
+        'bounce-slow': 'bounce 3s infinite',
       },
     },
   },
   plugins: [],
-};
+}
