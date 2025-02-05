@@ -1,4 +1,3 @@
-import React from "react";
 import { motion } from "framer-motion";
 
 const RightSidebar = () => {
@@ -14,4 +13,4 @@ const RightSidebar = () => {
   );
 };
 
-export default RightSidebar; 
+export default RightSidebar;

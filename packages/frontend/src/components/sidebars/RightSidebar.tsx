@@ -1,14 +1,9 @@
-import React, { ReactNode } from "react";
 import { WalletBalance } from "../WalletBalance";
 import { ClockIcon } from "@heroicons/react/24/outline";
 
-interface RightSidebarProps {
-  children?: ReactNode;
-}
-
-export const RightSidebar = ({ children }: RightSidebarProps) => {
+export const RightSidebar = () => {
   return (
-    <aside className="h-full border-l border-neon-blue/10 bg-dark-secondary/50 backdrop-blur-lg ">
+    <aside className="h-full border-l border-neon-blue/10 bg-dark-secondary/50 backdrop-blur-lg">
       <div className="p-4 h-full overflow-y-scroll">
         <div className="space-y-6">
           {/* Wallet Balance Section */}

@@ -8,7 +8,6 @@ interface MealDetailsModalProps {
 }
 
 const MealDetailsModal: React.FC<MealDetailsModalProps> = ({
-  meal,
   isOpen,
   onClose,
 }) => {
@@ -41,4 +40,4 @@ const MealDetailsModal: React.FC<MealDetailsModalProps> = ({
   );
 };
 
-export default MealDetailsModal; 
+export default MealDetailsModal;

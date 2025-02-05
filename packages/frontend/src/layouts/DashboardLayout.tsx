@@ -1,4 +1,3 @@
-import React from "react";
 import { WalletHeader } from "../components/WalletHeader";
 import ChatInterface from "../components/ChatInterface";
 import { useMobileMenu } from "../context/MobileMenuContext";

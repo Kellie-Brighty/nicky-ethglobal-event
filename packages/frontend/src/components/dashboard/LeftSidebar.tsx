@@ -1,6 +1,13 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
+
+// Add interface for Mood
+interface Mood {
+  emoji: string;
+  label: string;
+  color: string;
+}
 
 const moods = [
   { emoji: "😊", label: "Happy", color: "bg-green-400" },
@@ -10,29 +17,9 @@ const moods = [
   { emoji: "🤔", label: "Neutral", color: "bg-yellow-400" },
 ];
 
-const MealSuggestion = ({ meal, onClick }) => (
-  <motion.div
-    whileHover={{ scale: 1.05 }}
-    onClick={onClick}
-    className="relative rounded-lg overflow-hidden cursor-pointer group mb-4"
-  >
-    <img 
-      src={meal.image} 
-      alt={meal.name}
-      className="w-full h-48 object-cover"
-    />
-    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent p-4 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity">
-      <h3 className="text-white font-bold">{meal.name}</h3>
-      <p className="text-white/80 text-sm">{meal.description}</p>
-    </div>
-  </motion.div>
-);
-
 const LeftSidebar = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [selectedMood, setSelectedMood] = useState(null);
-  const [showMealModal, setShowMealModal] = useState(false);
-  const [selectedMeal, setSelectedMeal] = useState(null);
+  const [selectedMood, setSelectedMood] = useState<Mood | null>(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -100,4 +87,4 @@ const LeftSidebar = () => {
   );
 };
 
-export default LeftSidebar; 
+export default LeftSidebar;
