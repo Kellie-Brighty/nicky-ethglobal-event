@@ -10,6 +10,7 @@ import {
   AdjustmentsHorizontalIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { useNavigate } from "react-router-dom";
 
 export const LeftSidebar = () => {
   const { closeMenu } = useMobileMenu();
@@ -18,6 +19,7 @@ export const LeftSidebar = () => {
   const { favorites } = useFavorites();
   const [showFavorites, setShowFavorites] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStart.current = e.touches[0].clientX;
@@ -94,8 +96,12 @@ export const LeftSidebar = () => {
             Quick Actions
           </h2>
           <div className="space-y-2">
-            <button className="w-full px-4 py-3 text-left rounded-lg bg-dark-secondary/50 hover:bg-dark-secondary transition-colors border border-neon-blue/10 flex items-center gap-3 group">
+            <button
+              onClick={() => navigate("/marketplace")}
+              className="w-full px-4 py-3 text-left rounded-lg bg-dark-secondary/50 hover:bg-dark-secondary transition-colors border border-neon-blue/10 flex items-center gap-3 group"
+            >
               <ShoppingBagIcon className="w-5 h-5 text-neon-blue group-hover:text-neon-green transition-colors" />
+
               <span className="text-light-gray group-hover:text-neon-green transition-colors">
                 Go to Marketplace
               </span>

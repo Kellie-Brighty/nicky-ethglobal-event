@@ -11,15 +11,22 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { MobileMenuProvider } from "./context/MobileMenuContext";
 import { WagmiConfig } from "wagmi";
 import { config } from "./lib/wagmi";
+import { mainnet, sepolia } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { FavoritesProvider } from "./context/FavoritesContext";
 import { useAccount } from "wagmi";
 import { createWeb3Modal } from "@web3modal/wagmi/react";
+import { Marketplace } from "./pages/Marketplace";
+import { CartProvider } from "./context/CartContext";
+import { FilterProvider } from "./context/FilterContext";
+import { OrderProvider } from "./context/OrderContext";
+import * as Tooltip from "@radix-ui/react-tooltip";
 
 // Create a client
 const queryClient = new QueryClient();
 
 // Protected Route Component
+
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isConnected } = useAccount();
 
@@ -33,7 +40,8 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 // Initialize web3modal
 createWeb3Modal({
   wagmiConfig: config,
-  projectId: import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID!,
+  projectId: import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID,
+  chains: [mainnet, sepolia],
   themeMode: "dark",
 });
 
@@ -41,25 +49,32 @@ function App() {
   return (
     <WagmiConfig config={config}>
       <QueryClientProvider client={queryClient}>
-        <FavoritesProvider>
-          <ThemeProvider>
-            <MobileMenuProvider>
-              <Router>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route
-                    path="/dashboard/*"
-                    element={
-                      <ProtectedRoute>
-                        <DashboardLayout />
-                      </ProtectedRoute>
-                    }
-                  />
-                </Routes>
-              </Router>
-            </MobileMenuProvider>
-          </ThemeProvider>
-        </FavoritesProvider>
+        <OrderProvider>
+          <FilterProvider>
+            <CartProvider>
+              <FavoritesProvider>
+                <ThemeProvider>
+                  <MobileMenuProvider>
+                    <Router>
+                      <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route
+                          path="/dashboard/*"
+                          element={
+                            <ProtectedRoute>
+                              <DashboardLayout />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route path="/marketplace" element={<Marketplace />} />
+                      </Routes>
+                    </Router>
+                  </MobileMenuProvider>
+                </ThemeProvider>
+              </FavoritesProvider>
+            </CartProvider>
+          </FilterProvider>
+        </OrderProvider>
       </QueryClientProvider>
     </WagmiConfig>
   );
