@@ -4,50 +4,79 @@ import {
   Routes,
   Route,
   Navigate,
+  useLocation,
 } from "react-router-dom";
 import DashboardLayout from "./layouts/DashboardLayout";
 import Home from "./pages/Home";
 import { ThemeProvider } from "./context/ThemeContext";
 import { MobileMenuProvider } from "./context/MobileMenuContext";
-import { WagmiConfig } from "wagmi";
-import { config } from "./lib/wagmi";
-import { mainnet, sepolia } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { FavoritesProvider } from "./context/FavoritesContext";
-import { useAccount } from "wagmi";
-import { createWeb3Modal } from "@web3modal/wagmi/react";
 import { Marketplace } from "./pages/Marketplace";
 import { CartProvider } from "./context/CartContext";
 import { FilterProvider } from "./context/FilterContext";
 import { OrderProvider } from "./context/OrderContext";
-import * as Tooltip from "@radix-ui/react-tooltip";
+import { StarknetProvider } from "./components/providers/StarknetProvider";
+import { useAccount, useConnect } from "@starknet-react/core";
 
 // Create a client
 const queryClient = new QueryClient();
 
 // Protected Route Component
-
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isConnected } = useAccount();
+  const { status, address } = useAccount();
+  const { connectors, connect } = useConnect();
 
-  if (!isConnected) {
+  const handleConnect = async () => {
+    const argentConnector = connectors.find((c) => c.id === "argentX");
+    if (argentConnector) {
+      try {
+        const connectPromise = connect({ connector: argentConnector });
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Connection timeout")), 30000)
+        );
+
+        await Promise.race([connectPromise, timeoutPromise]);
+      } catch (err: unknown) {
+        console.error("Failed to connect:", err);
+        if (err instanceof Error && err.message === "Connection timeout") {
+          console.log("Connection timed out. Please try again.");
+        }
+      }
+    }
+  };
+
+  if (status === "disconnected" || !address) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-dark-primary">
+        <div className="text-center p-8 rounded-lg">
+          <h2 className="text-2xl font-bold text-light-gray mb-2">
+            Disconnected from Wallet
+          </h2>
+          <p className="text-light-gray/60">
+            Please reconnect your wallet to access the dashboard
+          </p>
+          <button
+            onClick={handleConnect}
+            className="mt-4 px-6 py-2 bg-neon-blue text-black rounded-lg hover:bg-neon-blue/90 transition-colors"
+          >
+            Reconnect Wallet
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!address) {
     return <Navigate to="/" replace />;
   }
 
   return <>{children}</>;
 };
 
-// Initialize web3modal
-createWeb3Modal({
-  wagmiConfig: config,
-  projectId: import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID,
-  chains: [mainnet, sepolia],
-  themeMode: "dark",
-});
-
 function App() {
   return (
-    <WagmiConfig config={config}>
+    <StarknetProvider>
       <QueryClientProvider client={queryClient}>
         <OrderProvider>
           <FilterProvider>
@@ -59,7 +88,7 @@ function App() {
                       <Routes>
                         <Route path="/" element={<Home />} />
                         <Route
-                          path="/dashboard/*"
+                          path="/dashboard"
                           element={
                             <ProtectedRoute>
                               <DashboardLayout />
@@ -76,7 +105,7 @@ function App() {
           </FilterProvider>
         </OrderProvider>
       </QueryClientProvider>
-    </WagmiConfig>
+    </StarknetProvider>
   );
 }
 

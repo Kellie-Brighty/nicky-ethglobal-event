@@ -1,13 +1,21 @@
-import { defaultWagmiConfig } from "@web3modal/wagmi";
-import { baseSepolia } from "wagmi/chains";
+import { defaultWagmiConfig } from "@web3modal/wagmi/react";
+import { mainnet, sepolia, base, baseGoerli } from "wagmi/chains";
+
+if (!import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID) {
+  throw new Error("Missing VITE_WALLET_CONNECT_PROJECT_ID");
+}
+
+const projectId = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID;
+
+const metadata = {
+  name: "Base Food",
+  description: "AI-powered food ordering on Base",
+  url: "https://basefood.xyz", // TODO: Update with your website
+  icons: ["https://avatars.githubusercontent.com/u/37784886"],
+};
 
 export const config = defaultWagmiConfig({
-  projectId: import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID!,
-  chains: [baseSepolia], // Add the chains you want to support
-  metadata: {
-    name: "FoodieAI",
-    description: "AI-powered Food Delivery dApp",
-    url: window.location.origin,
-    icons: ["https://avatars.githubusercontent.com/u/37784886"],
-  },
+  chains: [base, baseGoerli, mainnet, sepolia], // Add chains you want to support
+  projectId,
+  metadata,
 });

@@ -1,8 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useAccount } from "wagmi";
-import { useWeb3Modal } from "@web3modal/wagmi/react";
+import { useConnect, useAccount } from "@starknet-react/core";
 
 const FloatingElement: React.FC<{
   className: string;
@@ -30,23 +29,36 @@ const FloatingElement: React.FC<{
 
 const Hero: React.FC = () => {
   const navigate = useNavigate();
-  const { isConnected } = useAccount();
-  const { open } = useWeb3Modal();
+  const { connect, connectors } = useConnect();
+  const { address, status } = useAccount();
 
   const handleConnect = async () => {
-    try {
-      await open();
-    } catch (err) {
-      console.error("Failed to connect:", err);
+    const argentConnector = connectors.find((c) => c.id === "argentX");
+    if (argentConnector) {
+      try {
+        const connectPromise = connect({ connector: argentConnector });
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Connection timeout")), 30000)
+        );
+
+        await Promise.race([connectPromise, timeoutPromise]);
+      } catch (err: unknown) {
+        console.error("Failed to connect:", err);
+        if (err instanceof Error && err.message === "Connection timeout") {
+          console.log("Connection timed out. Please try again.");
+        }
+      }
     }
   };
 
-  // Redirect to dashboard when connected
   React.useEffect(() => {
-    if (isConnected) {
-      navigate("/dashboard");
+    if (status === "connected" && address) {
+      const timer = setTimeout(() => {
+        navigate("/dashboard");
+      }, 500);
+      return () => clearTimeout(timer);
     }
-  }, [isConnected, navigate]);
+  }, [status, address, navigate]);
 
   return (
     <section className="relative min-h-screen bg-black overflow-hidden">
@@ -274,13 +286,15 @@ const Hero: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, delay: 0.8 }}
           >
-            <button
-              onClick={handleConnect}
-              className="group relative px-8 py-4 bg-transparent border-2 border-neon-blue text-neon-blue font-bold rounded-full transition-all duration-300 transform hover:scale-105 hover:bg-neon-blue hover:text-black disabled:opacity-50"
-            >
-              <span className="relative z-10">Connect Wallet</span>
-              <motion.div className="absolute inset-0 rounded-full bg-gradient-to-r from-neon-blue via-neon-green to-neon-blue opacity-0 group-hover:opacity-100" />
-            </button>
+            {!address && (
+              <button
+                onClick={handleConnect}
+                className="group relative px-8 py-4 bg-transparent border-2 border-neon-blue text-neon-blue font-bold rounded-full transition-all duration-300 transform hover:scale-105 hover:bg-neon-blue hover:text-black disabled:opacity-50"
+              >
+                <span className="relative z-10">Connect Wallet</span>
+                <motion.div className="absolute inset-0 rounded-full bg-gradient-to-r from-neon-blue via-neon-green to-neon-blue opacity-0 group-hover:opacity-100" />
+              </button>
+            )}
             {/* <button className="px-8 py-4 border-2 border-neon-blue text-neon-blue font-bold rounded-full hover:bg-neon-blue/10 transition-all transform hover:scale-105">
               Learn More
             </button> */}

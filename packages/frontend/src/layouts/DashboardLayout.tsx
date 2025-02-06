@@ -3,9 +3,16 @@ import ChatInterface from "../components/ChatInterface";
 import { useMobileMenu } from "../context/MobileMenuContext";
 import RightSidebar from "../components/sidebars/RightSidebar";
 import LeftSidebar from "../components/sidebars/LeftSidebar";
+import { useAccount } from "@starknet-react/core";
 
 const DashboardLayout = () => {
   const { isMenuOpen, closeMenu } = useMobileMenu();
+  const { status, address } = useAccount();
+
+  // Add loading state
+  if (status === "connecting" || status === "reconnecting") {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="h-screen w-full bg-gradient-to-br from-black to-dark-secondary flex flex-col overflow-hidden">
