@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { VoiceInput } from "./VoiceInput";
 
@@ -10,12 +10,24 @@ interface MessageInputProps {
 const MessageInput: React.FC<MessageInputProps> = ({ onSend, isLoading }) => {
   const [message, setMessage] = useState("");
   const [isListening, setIsListening] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim() && !isLoading) {
-      onSend(message.trim());
-      setMessage("");
+    if (!message.trim()) return;
+
+    // Send the message
+    onSend(message.trim());
+    setMessage("");
+
+    // Don't trigger voice recording here
+    inputRef.current?.focus();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e as unknown as React.FormEvent);
     }
   };
 
@@ -27,10 +39,12 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSend, isLoading }) => {
     <form onSubmit={handleSubmit} className="flex items-center gap-2">
       <div className="flex-1 relative">
         <input
+          ref={inputRef}
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder={isListening ? "Listening..." : "Type your message..."}
+          onKeyDown={handleKeyDown}
+          placeholder="Type your message..."
           className="w-full px-4 py-2 rounded-lg bg-dark-secondary/50 border border-neon-blue/20 focus:border-neon-blue/50 text-light-gray placeholder-gray-500 transition-colors"
           disabled={isLoading || isListening}
         />
