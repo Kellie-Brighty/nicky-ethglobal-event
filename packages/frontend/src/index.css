@@ -5,6 +5,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Add these styles for Radix UI Tooltip */
+.radix-tooltip-content {
+  z-index: 1000;
+}
+
 :root {
   font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -94,4 +99,13 @@ body {
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
   background-color: rgba(0, 242, 254, 0.3);
+}
+
+@keyframes flash {
+  0%, 100% { background-color: rgba(0, 128, 255, 0.1); }
+  50% { background-color: rgba(0, 128, 255, 0.3); }
+}
+
+.animate-flash {
+  animation: flash 0.5s ease-in-out infinite;
 }

@@ -1,8 +1,11 @@
-import { useAccount, useBalance } from "wagmi";
+import { useAccount, useBalance } from "@starknet-react/core";
 
 export const WalletBalance = () => {
   const { address } = useAccount();
-  const { data: balance } = useBalance({ address });
+  const { data: balance } = useBalance({
+    address,
+    watch: true,
+  });
 
   if (!address) {
     return (
@@ -15,10 +18,12 @@ export const WalletBalance = () => {
 
   return (
     <div className="mb-6 p-4 rounded-lg bg-dark-secondary border border-neon-blue/10">
-      <h2 className="text-lg font-semibold mb-2 text-light-gray">Wallet Balance</h2>
+      <h2 className="text-lg font-semibold mb-2 text-light-gray">
+        Wallet Balance
+      </h2>
       <div className="flex items-center justify-between">
         <span className="text-neon-blue font-mono">
-          {balance?.formatted || "0"} {balance?.symbol}
+          {balance?.formatted || "0"} ETH
         </span>
         <button className="text-sm text-neon-green hover:text-neon-blue transition-colors">
           Add Funds
@@ -26,4 +31,4 @@ export const WalletBalance = () => {
       </div>
     </div>
   );
-}; 
+};

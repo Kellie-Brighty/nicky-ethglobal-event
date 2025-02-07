@@ -1,4 +1,6 @@
 import { getHealthTipsTool } from "./getHealthTips";
+import { getNutritionInfoTool } from "./getNutritionInfo";
+import { getMarketplaceItemsTool } from "./getMarketplaceItems";
 
 export interface ToolConfig<T = any> {
   definition: {
@@ -18,4 +20,6 @@ export interface ToolConfig<T = any> {
 
 export const tools: Record<string, ToolConfig> = {
   get_health_tips: getHealthTipsTool,
+  getNutritionInfo: getNutritionInfoTool,
+  get_marketplace_items: getMarketplaceItemsTool,
 };

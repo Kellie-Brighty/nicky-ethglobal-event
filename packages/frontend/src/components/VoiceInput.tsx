@@ -75,22 +75,23 @@ export const VoiceInput: React.FC<VoiceInputProps> = ({
 
   const startListening = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-      // Set up audio analysis
-      audioContext.current = new AudioContext();
-      analyzer.current = audioContext.current.createAnalyser();
-      microphone.current = audioContext.current.createMediaStreamSource(stream);
-      analyzer.current.fftSize = 256;
-      microphone.current.connect(analyzer.current);
-      analyzeAudio();
-
-      if (recognition) {
-        recognition.start();
+      if (!recognition) {
+        // Only initialize if user explicitly clicks the mic button
+        const recognition = new (window as any).webkitSpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = "en-US";
+        setRecognition(recognition);
+      }
+      
+      // Only start if user explicitly clicked mic
+      if (!isListening) {
+        await setupAudioContext();
+        recognition?.start();
         setIsListening(true);
       }
     } catch (error) {
-      console.error("Error accessing microphone:", error);
+      console.error("Error starting voice input:", error);
     }
   };
 
@@ -108,6 +109,22 @@ export const VoiceInput: React.FC<VoiceInputProps> = ({
       stopListening();
     } else {
       startListening();
+    }
+  };
+
+  const setupAudioContext = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+      // Set up audio analysis
+      audioContext.current = new AudioContext();
+      analyzer.current = audioContext.current.createAnalyser();
+      microphone.current = audioContext.current.createMediaStreamSource(stream);
+      analyzer.current.fftSize = 256;
+      microphone.current.connect(analyzer.current);
+      analyzeAudio();
+    } catch (error) {
+      console.error("Error setting up audio context:", error);
     }
   };
 
