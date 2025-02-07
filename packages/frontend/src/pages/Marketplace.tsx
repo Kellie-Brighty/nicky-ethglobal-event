@@ -1,39 +1,34 @@
-import React, { useState, useEffect } from "react";
-import {
-  FunnelIcon,
-  ShoppingCartIcon,
-  ChevronRightIcon,
-  ClockIcon,
-  BuildingStorefrontIcon,
-  FireIcon,
-  SparklesIcon,
-  Square3Stack3DIcon,
-  StarIcon,
-  CurrencyDollarIcon,
-} from "@heroicons/react/24/outline";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ProductGrid } from "../components/marketplace/ProductGrid";
-import { Cart } from "../components/marketplace/Cart";
 import { FilterSidebar } from "../components/marketplace/FilterSidebar";
 import { SearchBar } from "../components/marketplace/SearchBar";
-import { OrderHistory } from "../components/marketplace/OrderHistory";
-import { OrderTracking } from "../components/marketplace/OrderTracking";
-import { RestaurantCard } from "../components/marketplace/RestaurantCard";
 import { MARKETPLACE_TABS, MENU_ITEMS } from "../data/products";
 import type { MenuItem } from "../data/products";
 import { TabView } from "../components/marketplace/TabView";
-import { RestaurantView } from "../components/marketplace/RestaurantView";
-import type { IconType } from "react-icon";
 import { ItemsHeader } from "../components/marketplace/ItemsHeader";
-import { RestaurantItem } from "../components/marketplace/RestaurantItem";
 import { ItemDetailModal } from "../components/marketplace/ItemDetailModal";
 import { useCart } from "../context/CartContext";
-import { useOrders } from "../context/OrderContext";
-import { OrdersView } from "../components/marketplace/OrdersView";
 import { MarketplaceHeader } from "../components/marketplace/MarketplaceHeader";
 import { MarketplaceContent } from "../components/marketplace/MarketplaceContent";
 import { MarketplaceSidebar } from "../components/marketplace/MarketplaceSidebar";
 import { BackButton } from "../components/BackButton";
+import { useAccount, useContract, useProvider } from "@starknet-react/core";
+import { Abi, Contract, BigNumberish } from "starknet";
+import marketPlaceAbi from "./abis/marketPlaceabi.json";
+import { shortString } from "starknet";
+const decimals: BigNumberish = 18;
+
+const CONTRACT_ADDRESS =
+  "0x019549b132856d2429c8394ce80b07b396faed5bea4b2fbe3ad482b03b6ffb7c";
+
+interface Restaurant {
+  id: BigNumberish;
+  orderCount: BigNumberish;
+  address: string;
+  name: string;
+  location: string;
+  owner: string;
+}
 
 export const Marketplace: React.FC = () => {
   const [activeTab, setActiveTab] = useState<
@@ -43,11 +38,32 @@ export const Marketplace: React.FC = () => {
   const [sidebarView, setSidebarView] = useState<"cart" | "orders">("cart");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const { items: cartItems, addItem: addToCart } = useCart();
-  const { addOrder } = useOrders();
+  // const { addOrder } = useOrders();
+  const { address, account } = useAccount();
+  const [abi, setAbi] = useState<Abi | undefined>(undefined);
+  const { provider } = useProvider();
+  // const { contract } = useContract({ abi, address: CONTRACT_ADDRESS });
+  const marketContract = new Contract(
+    marketPlaceAbi,
+    CONTRACT_ADDRESS,
+    account
+  );
 
-  const toggleFilter = () => {
-    setIsFilterOpen((prev) => !prev);
-  };
+  async function getAbi() {
+    try {
+      const classInfo = await provider.getClassAt(CONTRACT_ADDRESS);
+      setAbi(classInfo.abi);
+      console.log("abi", classInfo, CONTRACT_ADDRESS);
+    } catch (error) {
+      console.error("Error fetching ABI:", error);
+    }
+  }
+
+  useEffect(() => {
+    if (address) {
+      getAbi();
+    }
+  }, [address]);
 
   const handleAddToCart = (item: MenuItem) => {
     addToCart({
@@ -65,6 +81,64 @@ export const Marketplace: React.FC = () => {
     const item = MENU_ITEMS[activeTab].find((item) => item.id === itemId);
     if (item) {
       setSelectedItem(itemId);
+    }
+  };
+
+  const getRestaurants = async () => {
+    if (!marketContract) return;
+
+    try {
+      const response = await marketContract.get_all_restaurants();
+      console.log("Raw response:", response);
+
+      // Parse the response array based on the contract's structure
+      const restaurants = response.map((restaurant: any) => {
+        // Convert BigNumberish values to readable format
+        const id = Number(restaurant[0]);
+        const orderCount = Number(restaurant[1]);
+        // Convert felt252 address to hex string
+        const address = "0x" + BigInt(restaurant[2]).toString(16);
+        // Decode any shortStrings (if your contract returns them)
+        const name = shortString.decodeShortString(restaurant[3] || "");
+        const location = shortString.decodeShortString(restaurant[4] || "");
+        const owner = "0x" + BigInt(restaurant[5] || 0).toString(16);
+
+        return {
+          id,
+          orderCount,
+          address,
+          name: name || `Restaurant #${id}`,
+          location: location || "Unknown Location",
+          owner,
+        };
+      });
+
+      console.log("Parsed restaurants:", restaurants);
+      return restaurants;
+    } catch (error) {
+      console.error("Error fetching restaurants:", error);
+      return [];
+    }
+  };
+
+  // Call when contract is ready
+  useEffect(() => {
+    if (marketContract && address) {
+      getRestaurants();
+    }
+  }, [marketContract, address]);
+
+  // Example function to call a write method
+  const addRestaurant = async (restaurantData: any) => {
+    if (!marketContract) return;
+
+    try {
+      // Call contract function
+      const response = await marketContract.add_restaurant(restaurantData);
+      await response.wait(); // Wait for transaction
+      console.log("Restaurant added:", response);
+    } catch (error) {
+      console.error("Error adding restaurant:", error);
     }
   };
 
@@ -137,12 +211,31 @@ export const Marketplace: React.FC = () => {
         <AnimatePresence>
           {selectedItem && (
             <ItemDetailModal
-              item={
-                MENU_ITEMS[activeTab].find((item) => item.id === selectedItem)!
-              }
+              item={{
+                ...MENU_ITEMS[activeTab].find(
+                  (item) => item.id === selectedItem
+                )!,
+                description:
+                  MENU_ITEMS[activeTab].find((item) => item.id === selectedItem)
+                    ?.description || "",
+                dietaryInfo:
+                  MENU_ITEMS[activeTab].find((item) => item.id === selectedItem)
+                    ?.dietaryInfo || [],
+                spicyLevel:
+                  MENU_ITEMS[activeTab].find((item) => item.id === selectedItem)
+                    ?.spicyLevel || 0,
+              }}
               onClose={() => setSelectedItem(null)}
-              onAddToCart={(item) => {
-                handleAddToCart(item);
+              onAddToCart={() => {
+                if (
+                  MENU_ITEMS[activeTab].find((item) => item.id === selectedItem)
+                ) {
+                  handleAddToCart(
+                    MENU_ITEMS[activeTab].find(
+                      (item) => item.id === selectedItem
+                    )!
+                  );
+                }
                 setSelectedItem(null);
               }}
             />

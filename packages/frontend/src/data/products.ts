@@ -28,6 +28,8 @@ export const MARKETPLACE_TABS = [
   },
 ] as const;
 
+export type MarketplaceTab = typeof MARKETPLACE_TABS[number];
+
 export interface MenuItem {
   id: string;
   name: string;

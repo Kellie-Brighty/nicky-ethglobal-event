@@ -4,6 +4,7 @@ import { Bars3Icon } from "@heroicons/react/24/outline";
 import { useMobileMenu } from "../context/MobileMenuContext";
 import { useAccount, useConnect, useDisconnect } from "@starknet-react/core";
 import { useNavigate } from "react-router-dom";
+import nataLogo from "../assets/images/nata-logo.jpg";
 
 export const WalletHeader = () => {
   const { toggleMenu } = useMobileMenu();
@@ -36,8 +37,14 @@ export const WalletHeader = () => {
   };
 
   return (
-    <header className="flex items-center justify-between px-4 py-2 bg-dark-primary border-b border-neon-blue/10">
-      <div className="flex items-center gap-4">
+    <header className="flex items-center justify-between px-6 py-3 bg-dark-primary border-b border-neon-blue/10">
+      <div className="flex items-center gap-6">
+        <img
+          src={nataLogo}
+          alt="Nata"
+          className="h-12 w-auto object-contain hover:opacity-90 transition-opacity cursor-pointer"
+          onClick={() => navigate("/")}
+        />
         <button
           onClick={toggleMenu}
           className="p-2 hover:bg-dark-secondary rounded-lg transition-colors lg:hidden"

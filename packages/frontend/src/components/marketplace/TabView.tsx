@@ -9,7 +9,7 @@ interface Tab {
 }
 
 interface TabViewProps {
-  tabs: Tab[];
+  tabs: readonly Tab[];
   activeTab: string;
   onTabChange: (tabId: string) => void;
   showLocationFilter?: boolean;

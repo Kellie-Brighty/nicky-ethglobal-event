@@ -1,0 +1,91 @@
+[
+  {
+    "type": "impl",
+    "name": "RestaurantManagerImpl",
+    "interface_name": "hello::IRestaurantManager"
+  },
+  {
+    "type": "enum",
+    "name": "core::option::Option::<(core::felt252, core::felt252, core::starknet::contract_address::ContractAddress)>",
+    "variants": [
+      {
+        "name": "Some",
+        "type": "(core::felt252, core::felt252, core::starknet::contract_address::ContractAddress)"
+      },
+      {
+        "name": "None",
+        "type": "()"
+      }
+    ]
+  },
+  {
+    "type": "interface",
+    "name": "hello::IRestaurantManager",
+    "items": [
+      {
+        "type": "function",
+        "name": "add_restaurant",
+        "inputs": [
+          {
+            "name": "name",
+            "type": "core::felt252"
+          },
+          {
+            "name": "location",
+            "type": "core::felt252"
+          },
+          {
+            "name": "owner",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "get_restaurant",
+        "inputs": [
+          {
+            "name": "owner",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::option::Option::<(core::felt252, core::felt252, core::starknet::contract_address::ContractAddress)>"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "get_all_restaurants",
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "core::array::Array::<(core::felt252, core::felt252, core::starknet::contract_address::ContractAddress)>"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "get_restaurant_count",
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "core::integer::u64"
+          }
+        ],
+        "state_mutability": "view"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "hello::RestaurantManager::Event",
+    "kind": "enum",
+    "variants": []
+  }
+]

@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useConnect, useAccount } from "@starknet-react/core";
+import nataLogo from "../../assets/images/nata-logo.jpg";
 
 const FloatingElement: React.FC<{
   className: string;
@@ -33,7 +34,8 @@ const Hero: React.FC = () => {
   const { address, status } = useAccount();
 
   const handleConnect = async () => {
-    const argentConnector = connectors.find((c) => c.id === "argentX");
+    const argentConnector = connectors.find((c) => c.id === "braavos");
+    console.log("connectors", argentConnector);
     if (argentConnector) {
       try {
         const connectPromise = connect({ connector: argentConnector });
@@ -62,6 +64,19 @@ const Hero: React.FC = () => {
 
   return (
     <section className="relative min-h-screen bg-black overflow-hidden">
+      {/* Add the logo */}
+      {/* <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="absolute top-8 left-1/2 transform -translate-x-1/2 z-20 bg-black/50 p-4 rounded-2xl backdrop-blur-sm"
+      >
+        <img
+          src={nataLogo}
+          alt="Nata"
+          className="h-32 w-auto object-contain filter drop-shadow-lg"
+        />
+      </motion.div> */}
+
       {/* Animated Background Graphics */}
       <div className="absolute inset-0">
         <motion.div
@@ -239,7 +254,7 @@ const Hero: React.FC = () => {
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            POWERED BY NICKY
+            POWERED BY NATA
           </motion.div>
 
           <motion.h1

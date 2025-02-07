@@ -3,12 +3,7 @@ import {
   ShoppingCartIcon,
   ClockIcon,
 } from "@heroicons/react/24/outline";
-
-interface Tab {
-  id: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-}
+import { MARKETPLACE_TABS, Tab } from "../../data/products";
 
 interface MarketplaceHeaderProps {
   activeTab: string;
@@ -17,7 +12,7 @@ interface MarketplaceHeaderProps {
   sidebarView: "cart" | "orders";
   setSidebarView: (view: "cart" | "orders") => void;
   cartItemsCount: number;
-  tabs: Tab[];
+  tabs: readonly Tab[];
 }
 
 export const MarketplaceHeader: React.FC<MarketplaceHeaderProps> = ({

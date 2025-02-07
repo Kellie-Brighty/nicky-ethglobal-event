@@ -1,12 +1,18 @@
 import React, { createContext, useContext, useState } from "react";
 import { Product } from "../types";
 
-interface CartItem extends Product {
+interface CartItem {
+  id: string;
+  name: string;
+  price: string | number;
   quantity?: number;
+  image?: string;
+  description?: string;
 }
 
 interface CartContextType {
   items: CartItem[];
+  addItem: (item: CartItem) => void;
   addToCart: (product: Product) => void;
   removeFromCart: (productId: string) => void;
   clearCart: () => void;
@@ -50,9 +56,21 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
       }, 0)
       .toFixed(3) + " ETH";
 
+  const addItem = (item: CartItem) => {
+    setItems((prevItems) => {
+      const existingItem = prevItems.find((i) => i.id === item.id);
+      if (existingItem) {
+        return prevItems.map((i) =>
+          i.id === item.id ? { ...i, quantity: (i.quantity || 1) + 1 } : i
+        );
+      }
+      return [...prevItems, { ...item, quantity: 1 }];
+    });
+  };
+
   return (
     <CartContext.Provider
-      value={{ items, addToCart, removeFromCart, clearCart, total }}
+      value={{ items, addItem, addToCart, removeFromCart, clearCart, total }}
     >
       {children}
     </CartContext.Provider>

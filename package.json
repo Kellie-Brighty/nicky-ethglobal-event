@@ -28,6 +28,7 @@
     "@web3modal/wagmi": "^5.1.11",
     "date-fns": "^4.1.0",
     "get-starknet": "^3.3.3",
+    "get-starknet-core": "^3.3.4",
     "react-router": "^7.1.5",
     "react-router-dom": "^7.1.5",
     "starknet": "^6.11.0",
