@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useConnect, useAccount } from "@starknet-react/core";
-import nataLogo from "../../assets/images/nata-logo.jpg";
+import nataAvatar from "../../assets/images/natavatar-nobg.png";
 
 const FloatingElement: React.FC<{
   className: string;
@@ -250,11 +250,16 @@ const Hero: React.FC = () => {
         >
           {/* Animated tech elements above title */}
           <motion.div
-            className="text-neon-blue/60 text-sm tracking-[0.3em] mb-4 font-mono"
+            className="text-neon-blue/60 text-sm tracking-[0.3em] mb-4 font-mono flex items-center gap-2"
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
             POWERED BY NATA
+            <img
+              src={nataAvatar}
+              alt="NATA Avatar"
+              className="w-14 h-14 rounded-full object-cover"
+            />
           </motion.div>
 
           <motion.h1
