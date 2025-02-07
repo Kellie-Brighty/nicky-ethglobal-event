@@ -16,26 +16,14 @@ export const ThreadManager = {
     localStorage.removeItem(THREAD_ID_KEY);
   },
 
-  waitForResponse: async (
-    client: OpenAI,
-    threadId: string,
-    runId: string
-  ): Promise<string> => {
-    let run;
-    do {
+  waitForResponse: async (client: any, threadId: string, runId: string) => {
+    let run = await client.beta.threads.runs.retrieve(threadId, runId);
+    while (run.status !== "completed") {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       run = await client.beta.threads.runs.retrieve(threadId, runId);
-    } while (run.status === "in_progress" || run.status === "queued");
-
-    if (run.status !== "completed") {
-      throw new Error(`Run failed with status: ${run.status}`);
     }
-
     const messages = await client.beta.threads.messages.list(threadId);
-    const messageContent = messages.data[0]?.content[0];
-    return messageContent && "text" in messageContent
-      ? messageContent.text.value
-      : "";
+    return messages.data[0].content[0].text.value;
   },
 };
 

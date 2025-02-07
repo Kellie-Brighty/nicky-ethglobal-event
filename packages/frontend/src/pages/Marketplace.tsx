@@ -19,7 +19,7 @@ import { shortString } from "starknet";
 const decimals: BigNumberish = 18;
 
 const CONTRACT_ADDRESS =
-  "0x019549b132856d2429c8394ce80b07b396faed5bea4b2fbe3ad482b03b6ffb7c";
+  "0x023be948e8a2be5eaeff47a267f7dc8a53d65e31c37aa95494dffecb677b639f";
 
 interface Restaurant {
   id: BigNumberish;

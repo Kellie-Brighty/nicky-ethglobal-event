@@ -79,6 +79,50 @@
           }
         ],
         "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "add_menu_item",
+        "inputs": [
+          {
+            "name": "restaurant_id",
+            "type": "core::integer::u64"
+          },
+          {
+            "name": "name",
+            "type": "core::felt252"
+          },
+          {
+            "name": "description",
+            "type": "core::felt252"
+          },
+          {
+            "name": "price",
+            "type": "core::integer::u64"
+          },
+          {
+            "name": "image_url",
+            "type": "core::felt252"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "get_restaurant_menu",
+        "inputs": [
+          {
+            "name": "restaurant_id",
+            "type": "core::integer::u64"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::array::Array::<(core::felt252, core::felt252, core::integer::u64, core::felt252, core::integer::u64)>"
+          }
+        ],
+        "state_mutability": "view"
       }
     ]
   },
