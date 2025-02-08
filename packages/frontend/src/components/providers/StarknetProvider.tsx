@@ -8,13 +8,7 @@ import {
 } from "@starknet-react/core";
 
 export function StarknetProvider({ children }: { children: React.ReactNode }) {
-  // Create connectors array directly instead of using useInjectedConnectors
   const connectors = [
-    new InjectedConnector({
-      options: {
-        id: "argentX",
-      },
-    }),
     new InjectedConnector({
       options: {
         id: "braavos",

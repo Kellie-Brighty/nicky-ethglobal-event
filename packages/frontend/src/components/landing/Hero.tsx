@@ -34,24 +34,32 @@ const Hero: React.FC = () => {
   const { address, status } = useAccount();
 
   const handleConnect = async () => {
-    const argentConnector = connectors.find((c) => c.id === "braavos");
-    console.log("connectors", argentConnector);
-    if (argentConnector) {
-      try {
-        const connectPromise = connect({ connector: argentConnector });
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Connection timeout")), 30000)
-        );
+    const braavosConnector = connectors.find((c) => c.id === "braavos");
+    if (!braavosConnector) {
+      console.error("Please install Braavos wallet");
+      return;
+    }
 
-        await Promise.race([connectPromise, timeoutPromise]);
-      } catch (err: unknown) {
-        console.error("Failed to connect:", err);
-        if (err instanceof Error && err.message === "Connection timeout") {
-          console.log("Connection timed out. Please try again.");
-        }
-      }
+    try {
+      await connect({ connector: braavosConnector });
+      localStorage.setItem("walletConnected", "true");
+    } catch (err: unknown) {
+      console.error("Failed to connect Braavos wallet:", err);
     }
   };
+
+  // Check connection on mount
+  React.useEffect(() => {
+    const checkConnection = async () => {
+      if (
+        status === "disconnected" &&
+        localStorage.getItem("walletConnected")
+      ) {
+        handleConnect();
+      }
+    };
+    checkConnection();
+  }, [status]);
 
   React.useEffect(() => {
     if (status === "connected" && address) {
