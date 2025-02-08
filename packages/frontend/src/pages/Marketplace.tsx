@@ -124,59 +124,64 @@ const isHex = (str: string): boolean => {
   return /^[0-9a-fA-F]+$/.test(str);
 };
 
-// const addRestaurant = async (restaurantData: { name: string; location: string; owner: string }) => {
-//   const nethermindRpcUrl = "https://rpc.nethermind.io/sepolia-juno"; // Or your RPC URL
+const addRestaurant = async (restaurantData: { name: string; location: string; owner: string }) => {
+  const nethermindRpcUrl = "https://rpc.nethermind.io/sepolia-juno"; // Or your RPC URL
 
-//   const { name, location, owner } = restaurantData;
-//   const nameHex = shortString.encodeShortString(name);
-//   const locationHex = shortString.encodeShortString(location);
+  const { name, location, owner } = restaurantData;
+  const nameHex = shortString.encodeShortString(name);
+  const locationHex = shortString.encodeShortString(location);
 
-//   try {
-//       const response = await fetch(nethermindRpcUrl, {
-//           method: "POST",
-//           headers: {
-//               "x-apikey": "07YwzEy7FrudmA77gvU3OlUsfrv6OCA6ypzbNMUJGtmbAQoxSDN1lHxVgR1htwyz", // Your API key
-//               "Content-Type": "application/json",
-//           },
+  try {
+      const response = await fetch(nethermindRpcUrl, {
+          method: "POST",
+          headers: {
+              "x-apikey": "07YwzEy7FrudmA77gvU3OlUsfrv6OCA6ypzbNMUJGtmbAQoxSDN1lHxVgR1htwyz", // Your API key
+              "Content-Type": "application/json",
+          },
 
-//           body: JSON.stringify({
-//             jsonrpc: "2.0",
-//             method: "starknet_call",
-//             params: {
-//               request: {
-//                 contract_address: "0x023be948e8a2be5eaeff47a267f7dc8a53d65e31c37aa95494dffecb677b639f",
-//                 entry_point_selector: "0x00067cda55560dab9cb2e0a54be39fde5161cfbcaaefe7dbc3611bf92ec3fb50", // Entry point selector for add_restaurant.  Get this from your contract's ABI.
-//                 calldata: [nameHex, locationHex, owner], // Pass parameters in calldata
-//                 signature: [], //  If your function doesn't require a signature, leave this empty.  Otherwise, provide the signature.
-//               },
-//               block_id: "latest",
-//             },
-//             id: 1,
-//           }),
+          body: JSON.stringify({
+            jsonrpc: "2.0",
+            method: "starknet_addDeclareTransaction",
+            params: {
+              "declare_transaction": {
+                contract_address: "0x023be948e8a2be5eaeff47a267f7dc8a53d65e31c37aa95494dffecb677b639f",
+                entry_point_selector: "0x00067cda55560dab9cb2e0a54be39fde5161cfbcaaefe7dbc3611bf92ec3fb50", // Entry point selector for add_restaurant.  Get this from your contract's ABI.
+                "compiled_class_hash": "0x3131fa018d520a037686ce3efddeab8f28895662f019ca3ca18a626650f7d1e",
+                calldata: [nameHex, locationHex, owner], 
+                max_fee: "0x0",
+                signature: [
+                "0x1d4231646034435917d3513cafd6e22ce3ca9a783357137e32b7f52827a9f98",
+                "0x61c0b5bae9710c514817c772146dd7509517d2c47fd9bf622370215485ee5af"
+            ],
+            "nonce": "0x0"
+              },
+              block_id: "latest",
+            },
+            id: 1,
+          }),
           
-//       });
+      });
 
-//       if (!response.ok) {
-//           const errorData = await response.json();
-//           throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorData?.error?.message || response.statusText}`);
-//       }
+      if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorData?.error?.message || response.statusText}`);
+      }
 
-//       const data = await response.json();
-//       console.log("Add Restaurant Response:", data);
-//       // Handle the response (transaction hash, etc.)
+      const data = await response.json();
+      console.log("Add Restaurant Response:", data);
+      // Handle the response (transaction hash, etc.)
 
-//   } catch (error) {
-//       console.error("Error adding restaurant:", error);
-//   }
-// };
+  } catch (error) {
+      console.error("Error adding restaurant:", error);
+  }
+};
 
-// const newRestaurant = {
-//   name: "The Cozy Cafe",
-//   location: "123 Main St, Anytown",
-//   owner: "0x023be948e8a2be5eaeff47a267f7dc8a53d65e31c37aa95494dffecb677b639f", // Replace with the owner's StarkNet address (already in hex format)
-// };
+const newRestaurant = {
+  name: "The Cozy Cafe",
+  location: "123 Main St, Anytown",// Replace with the owner's StarkNet address (already in hex format)
+};
 
-//addRestaurant(newRestaurant);
+addRestaurant(newRestaurant);
 
 // ... existing code ...
 
