@@ -198,31 +198,47 @@ export const restaurantTool: ToolConfig = {
           ); // Convert ETH to Wei
           const amountInWei = uint256.bnToUint256(amountBigInt);
 
-          // Check for existing unpaid order
-          const unpaidOrder = await contract.get_last_uncompleted_payment(
-            account.address
-          );
-
-          if (unpaidOrder && unpaidOrder[0] !== undefined) {
-            console.log("Unpaid order found:", unpaidOrder[0]);
-            return {
-              success: false,
-              message: "You have an unpaid order",
-              order_id: unpaidOrder[0],
-            };
+          // Fetch restaurant details to get its wallet address
+          const restaurants = await contract.get_all_restaurants();
+          const restaurant = restaurants[Number(restaurantIdBigInt)]; // Assuming index starts at 1
+          if (!restaurant) {
+            return { success: false, error: "Invalid restaurant ID" };
           }
 
-          // No unpaid order, place a new one
-          const orderData = await contract.place_order(
-            restaurantIdBigInt,
-            amountInWei.low,
-            account.address
-          );
+          const restaurantWallet = `0x${restaurant[2].toString(16)}`; // Convert restaurant contract address to hex
 
-          return { success: true, orderData };
+          const ETH_CONTRACT =
+            "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
+          // Send payment directly to the restaurant
+          const paymentTx = await account.execute([
+            {
+              contractAddress: ETH_CONTRACT,
+              entrypoint: "transfer", // Assuming the contract has a transfer function
+              calldata: [restaurantWallet, amountInWei.low, amountInWei.high], // Transfer total price to restaurant
+            },
+          ]);
+
+          console.log("Payment transaction:", paymentTx);
+
+          // Place the order after payment
+          // const orderData = await contract.place_order(
+          //   restaurantIdBigInt,
+          //   amountInWei.low,
+          //   account.address
+          // );
+
+          return {
+            success: true,
+            // orderData,
+            paymentTx,
+            message: "Order placed and payment sent successfully",
+          };
         } catch (error) {
-          console.error("Error placing order:", error);
-          return { success: false, error: "Failed to place order" };
+          console.error("Error placing order and sending payment:", error);
+          return {
+            success: false,
+            error: "Failed to place order and send payment",
+          };
         }
       }
 

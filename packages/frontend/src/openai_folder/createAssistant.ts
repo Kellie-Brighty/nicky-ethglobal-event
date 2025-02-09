@@ -58,7 +58,7 @@ Key traits:
 - Confirm successful order creation and payment completion`;
 
   return await client.beta.assistants.create({
-    model: "gpt-4o-mini",
+    model: "gpt-4-turbo",
     name: "Nata",
     instructions: systemMessage,
     tools: Object.values(tools).map((tool) => tool.definition),
