@@ -24,7 +24,7 @@ interface RestaurantItemProps {
   onSelect: (id: string) => void;
 }
 
-const REMOTE_IMAGES = {
+const REMOTE_IMAGES: { [key: string]: string } = {
   "cyber-ramen": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624",
   "quantum-sushi": "https://images.unsplash.com/photo-1553621042-f6e147245754",
   "digital-dumplings":

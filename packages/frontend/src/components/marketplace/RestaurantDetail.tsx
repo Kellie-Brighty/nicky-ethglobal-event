@@ -10,7 +10,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   InformationCircleIcon,
-  MenuIcon,
+  Bars3Icon,
   ChatBubbleBottomCenterTextIcon,
 } from "@heroicons/react/24/outline";
 import { Restaurant } from "../../data/products";
@@ -28,14 +28,14 @@ interface ImageGalleryProps {
 interface TabInfo {
   id: "menu" | "info" | "reviews";
   label: string;
-  icon: React.ComponentType<{ className: string }>;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 }
 
 const TABS: TabInfo[] = [
   {
     id: "menu",
     label: "Menu",
-    icon: MenuIcon,
+    icon: Bars3Icon,
   },
   {
     id: "info",

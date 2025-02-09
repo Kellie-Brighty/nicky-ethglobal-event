@@ -1,7 +1,6 @@
 import React from "react";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { useCart } from "../../context/CartContext";
-import { CartItemType } from "../../context/CartContext";
+import { useCart, CartItemType } from "../../context/CartContext";
 
 interface CartItemProps {
   item: CartItemType;
@@ -23,15 +22,15 @@ export const CartItem: React.FC<CartItemProps> = ({ item }) => {
         <div className="flex items-center gap-2 mt-1">
           <button
             onClick={() =>
-              updateQuantity(item.id, Math.max(1, item.quantity - 1))
+              updateQuantity(item.id, Math.max(1, (item.quantity || 1) - 1))
             }
             className="px-2 text-neon-blue hover:bg-neon-blue/10 rounded"
           >
             -
           </button>
-          <span className="text-light-gray">{item.quantity}</span>
+          <span className="text-light-gray">{item.quantity || 1}</span>
           <button
-            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+            onClick={() => updateQuantity(item.id, (item.quantity || 1) + 1)}
             className="px-2 text-neon-blue hover:bg-neon-blue/10 rounded"
           >
             +

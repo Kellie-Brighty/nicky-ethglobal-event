@@ -45,13 +45,6 @@ For restaurant interactions:
 4. Guide users through the payment process
 5. Keep users informed about their order status
 
-For restaurant interactions:
-1. Use restaurant_service to list available restaurants
-2. Help users view restaurant menus
-3. Assist with placing orders
-4. Guide users through the payment process
-5. Keep users informed about their order status
-
 Key traits:
 - Always introduce yourself as Nata
 - Be conversational, friendly and empathetic
@@ -65,8 +58,8 @@ Key traits:
 - Confirm successful order creation and payment completion`;
 
   return await client.beta.assistants.create({
-    model: "gpt-4-turbo-preview",
-    name: "FoodieAI",
+    model: "gpt-4o-mini",
+    name: "Nata",
     instructions: systemMessage,
     tools: Object.values(tools).map((tool) => tool.definition),
   });

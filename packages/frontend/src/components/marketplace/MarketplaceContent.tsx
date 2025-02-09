@@ -1,6 +1,5 @@
 import { RestaurantItem } from "./RestaurantItem";
 import { MenuItem } from "../../types/marketplace";
-import { AjooCard } from "./AjooCard";
 
 interface MarketplaceContentProps {
   activeTab: "featured" | "popular" | "restaurants";
@@ -25,21 +24,14 @@ export const MarketplaceContent: React.FC<MarketplaceContentProps> = ({
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {activeTab === "restaurants" ? (
         items.map((item) => (
-          <AjooCard
-            key={item.id}
-            name={item.name}
-            duration={item.duration}
-            nextPayout={item.nextPayout}
-            price={item.price}
-            rating={item.rating}
-            memberCount={item.memberCount}
-            onClick={() => onItemSelect(item.id)}
-          />
-        ))
-      ) : (
-        items.map((item) => (
           <RestaurantItem key={item.id} item={item} onSelect={onItemSelect} />
         ))
+      ) : (
+        <div>
+          <h2 className="text-2xl font-semibold text-light-gray">
+            No items found
+          </h2>
+        </div>
       )}
     </div>
   );

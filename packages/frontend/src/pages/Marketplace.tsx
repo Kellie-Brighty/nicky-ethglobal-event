@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FilterSidebar } from "../components/marketplace/FilterSidebar";
 import { SearchBar } from "../components/marketplace/SearchBar";
 import { MARKETPLACE_TABS, MENU_ITEMS } from "../data/products";
-import type { MenuItem } from "../data/products";
+import { MenuItem } from "../types/marketplace";
 import { TabView } from "../components/marketplace/TabView";
 import { ItemsHeader } from "../components/marketplace/ItemsHeader";
 import { ItemDetailModal } from "../components/marketplace/ItemDetailModal";
@@ -30,7 +30,14 @@ export const Marketplace: React.FC = () => {
       name: item.name,
       price: item.price,
       quantity: 1,
-      image: item.images?.[0] || "",
+      image: item.image,
+      images: item.images,
+      imageKey: item.imageKey,
+      rating: item.rating,
+      prepTime: item.prepTime,
+      minOrder: item.minOrder,
+      restaurantId: item.restaurantId,
+      categoryId: item.categoryId,
       description: item.description,
     });
     setSidebarView("cart"); // Switch to cart view when adding items
@@ -53,13 +60,14 @@ export const Marketplace: React.FC = () => {
             name: restaurant.name,
             description: restaurant.location,
             price: "0.00",
+            image: `/images/${restaurant.imageUrl}.jpg`,
             images: [`/images/${restaurant.imageUrl}.jpg`],
-            categories: [],
-            rating: 0,
             imageKey: restaurant.imageUrl || "default",
+            rating: 0,
             prepTime: 30,
-            deliveryTime: 0,
-            minimumOrder: 0,
+            minOrder: 0,
+            restaurantId: restaurant.id,
+            categoryId: "restaurant",
           })
         );
         setMenuItems(menuItems);

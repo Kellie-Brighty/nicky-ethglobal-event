@@ -9,14 +9,14 @@ import {
 } from "@heroicons/react/24/outline";
 import { StarIcon, ClockIcon } from "@heroicons/react/24/solid";
 import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid";
-import { useCart } from "../../context/CartContext";
+// import { useCart } from "../../context/CartContext";
 
-interface NutritionInfo {
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-}
+// interface NutritionInfo {
+//   calories: number;
+//   protein: number;
+//   carbs: number;
+//   fat: number;
+// }
 
 interface ItemDetails {
   id: string;
@@ -49,28 +49,29 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
 }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const { addItem } = useCart();
+  // const { addItem } = useCart();
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % item.images.length);
+    setCurrentImageIndex((prev) => (prev + 1) % (item.images?.length || 1));
   };
 
   const prevImage = () => {
     setCurrentImageIndex(
-      (prev) => (prev - 1 + item.images.length) % item.images.length
+      (prev) =>
+        (prev - 1 + (item.images?.length || 1)) % (item.images?.length || 1)
     );
   };
 
-  const handleAddToCart = () => {
-    addItem({
-      id: item.id,
-      name: item.name,
-      price: item.price,
-      quantity: 1,
-      image: item.images[0],
-    });
-    onAddToCart(item);
-  };
+  // const handleAddToCart = () => {
+  //   addItem({
+  //     id: item.id,
+  //     name: item.name,
+  //     price: item.price,
+  //     quantity: 1,
+  //     image: item.images?.[0] || "/placeholder.jpg",
+  //   });
+  //   onAddToCart(item);
+  // };
 
   const toggleFavorite = () => {
     setIsFavorite((prev) => !prev);
@@ -101,7 +102,7 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
           <AnimatePresence mode="wait">
             <motion.img
               key={currentImageIndex}
-              src={item.images[currentImageIndex]}
+              src={item.images?.[currentImageIndex] || "/placeholder.jpg"}
               alt={`${item.name} ${currentImageIndex + 1}`}
               className="w-full h-full object-cover"
               initial={{ opacity: 0 }}
@@ -125,7 +126,7 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
           </button>
 
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-            {item.images.map((_, index) => (
+            {item.images?.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentImageIndex(index)}
@@ -181,19 +182,25 @@ export const ItemDetailModal: React.FC<ItemDetailModalProps> = ({
             <div className="grid grid-cols-3 gap-4 mt-4">
               {item.nutritionInfo.protein && (
                 <div className="text-center">
-                  <div className="text-neon-blue">{item.nutritionInfo.protein}g</div>
+                  <div className="text-neon-blue">
+                    {item.nutritionInfo.protein}g
+                  </div>
                   <div className="text-xs text-light-gray/60">Protein</div>
                 </div>
               )}
               {item.nutritionInfo.carbs && (
                 <div className="text-center">
-                  <div className="text-neon-blue">{item.nutritionInfo.carbs}g</div>
+                  <div className="text-neon-blue">
+                    {item.nutritionInfo.carbs}g
+                  </div>
                   <div className="text-xs text-light-gray/60">Carbs</div>
                 </div>
               )}
               {item.nutritionInfo.fat && (
                 <div className="text-center">
-                  <div className="text-neon-blue">{item.nutritionInfo.fat}g</div>
+                  <div className="text-neon-blue">
+                    {item.nutritionInfo.fat}g
+                  </div>
                   <div className="text-xs text-light-gray/60">Fat</div>
                 </div>
               )}

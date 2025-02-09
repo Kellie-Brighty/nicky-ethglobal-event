@@ -1,6 +1,6 @@
-import { useAccount } from "@starknet-react/core";
+// import { useAccount } from "@starknet-react/core";
 
 export const OrderHistory = () => {
-  const { address } = useAccount();
+  // const { address } = useAccount();
   // ... rest of the component
 }; 

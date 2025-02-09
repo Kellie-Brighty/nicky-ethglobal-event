@@ -1,11 +1,10 @@
 import React from "react";
-import { motion } from "framer-motion";
 import { MapPinIcon } from "@heroicons/react/24/outline";
 
-interface Tab {
+export interface Tab {
   id: string;
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 }
 
 interface TabViewProps {

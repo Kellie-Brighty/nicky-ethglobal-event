@@ -1,12 +1,12 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { HeartIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
-import { Product } from "../../data/products";
+import { MenuItem } from "../../types/marketplace";
 import { useCart } from "../../context/CartContext";
 import { useFavorites } from "../../context/FavoritesContext";
 
 interface ProductCardProps {
-  product: Product;
+  product: MenuItem;
   onSelect: () => void;
 }
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+// import { useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { useMobileMenu } from "../context/MobileMenuContext";
@@ -13,7 +13,7 @@ export const WalletHeader = () => {
   const { connect } = useConnect();
   const { disconnect } = useDisconnect();
   const navigate = useNavigate();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  // const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleConnect = async () => {
     try {

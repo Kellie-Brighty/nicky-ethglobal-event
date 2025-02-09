@@ -1,11 +1,12 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useCart } from "../../context/CartContext";
-import { Product } from "../../types";
+
 import { HeartIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { useFavorites } from "../../context/FavoritesContext";
-import { PRODUCTS } from "../../data/products";
+
 import { useFilter } from "../../context/FilterContext";
+import { MenuItem } from "../../types/marketplace";
 
 interface ProductGridProps {
   restaurantId: string | null;
@@ -20,7 +21,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   filterSpecialOffers = false,
   isNearbyOnly = false,
 }) => {
-  const { filteredProducts } = useFilter();
+  const { filteredProducts } = useFilter<MenuItem>();
   const { addToCart } = useCart();
   const { addToFavorites, isInFavorites } = useFavorites();
 

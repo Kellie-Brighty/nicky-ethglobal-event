@@ -17,7 +17,7 @@ interface FoodItemSliderProps {
 }
 
 export const FoodItemSlider = ({ items, onOrderClick }: FoodItemSliderProps) => {
-  const [scrollPosition, setScrollPosition] = useState(0);
+  const [_, setScrollPosition] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: "left" | "right") => {

@@ -7,6 +7,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useCart } from "../../context/CartContext";
 import { useOrders } from "../../context/OrderContext";
+import type { Order } from "../../context/OrderContext";
 import { CartItem } from "./CartItem";
 
 interface CartProps {
@@ -20,9 +21,8 @@ export const Cart: React.FC<CartProps> = ({
   isOpen,
   onClose,
   onOrderComplete,
-  onSwitchToOrders,
 }) => {
-  const { items, total, clearCart, addItem, removeItem } = useCart();
+  const { items, total, clearCart } = useCart();
   const { addOrder } = useOrders();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [checkoutSuccess, setCheckoutSuccess] = useState(false);
@@ -35,7 +35,16 @@ export const Cart: React.FC<CartProps> = ({
     try {
       setIsCheckingOut(true);
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      addOrder(items, `$${numericTotal.toFixed(2)}`);
+      const order: Order = {
+        id: crypto.randomUUID(),
+        items,
+        total,
+        status: "preparing",
+        timestamp: new Date(),
+        deliveryAddress: "",
+        estimatedDeliveryTime: "15-20 mins",
+      };
+      addOrder(order);
       setCheckoutSuccess(true);
       setTimeout(() => {
         clearCart();
@@ -49,11 +58,6 @@ export const Cart: React.FC<CartProps> = ({
     } finally {
       setIsCheckingOut(false);
     }
-  };
-
-  const handleUpdateQuantity = (itemId: string, quantity: number) => {
-    if (quantity < 1) return;
-    // Update quantity logic
   };
 
   const cartContent = (

@@ -14,9 +14,41 @@ import { format } from "date-fns";
 import { Toast } from "../Toast";
 import { LoadingSpinner } from "../LoadingSpinner";
 import { OpenAI } from "openai";
-import { ThreadManager } from "../../utils/threadManager";
 
-import { createAssistant } from "../../openai_folder/createAssistant";
+import { useNavigate } from "react-router-dom";
+import { Contract } from "starknet";
+import { connect } from "get-starknet";
+
+const hexToString = (hex: string): string => {
+  try {
+    const hexString = hex.startsWith("0x") ? hex.substring(2) : hex;
+    let str = "";
+    for (let i = 0; i < hexString.length; i += 2) {
+      str += String.fromCharCode(parseInt(hexString.substring(i, i + 2), 16));
+    }
+    return str;
+  } catch (error) {
+    console.error("Error converting hex to string:", error, hex);
+    return "";
+  }
+};
+
+function feltToString(felt: bigint): string {
+  let hex = felt.toString(16); // Convert BigInt to hex string
+
+  // Ensure hex string has even length (each byte should be 2 hex characters)
+  if (hex.length % 2 !== 0) {
+    hex = "0" + hex;
+  }
+
+  // Convert hex to ASCII string
+  return (
+    hex
+      .match(/.{1,2}/g) // Split into 2-character chunks
+      ?.map((byte) => String.fromCharCode(parseInt(byte, 16))) // Convert each to char
+      .join("") || ""
+  ); // Join chars into a readable string
+}
 
 // TODO: Future Enhancement - Smart Contract Integration
 // This implementation currently generates meal suggestions directly via AI.
@@ -38,7 +70,7 @@ interface MealSuggestion {
   id: string;
   name: string;
   description: string;
-  image: string;
+  imageUrl: string;
   price: string;
   emoji: string;
 }
@@ -54,21 +86,12 @@ interface ParsedMeal {
 const moods = [
   { emoji: "😊", label: "Happy", color: "bg-green-400" },
   { emoji: "😴", label: "Tired", color: "bg-blue-400" },
-  { emoji: "😔", label: "Sad", color: "bg-purple-400" },
-  { emoji: "😤", label: "Stressed", color: "bg-red-400" },
-  { emoji: "🤔", label: "Neutral", color: "bg-yellow-400" },
+  { emoji: "😢", label: "Sad", color: "bg-purple-400" },
+  { emoji: "😰", label: "Stressed", color: "bg-red-400" },
+  { emoji: "😐", label: "Neutral", color: "bg-yellow-400" },
 ];
 
 // Add utility function for Base price formatting
-const formatBasePrice = (priceUSD: string): string => {
-  // Remove '$' and convert to number
-  const usdAmount = parseFloat(priceUSD.replace("$", ""));
-  // Approximate BASE/USD rate (this should ideally come from an oracle)
-  const baseRate = 0.00047; // Example rate
-  const baseAmount = usdAmount * baseRate;
-  return `${baseAmount.toFixed(4)} BASE`;
-};
-import { useNavigate } from "react-router-dom";
 
 export const LeftSidebar = () => {
   // const { closeMenu } = useMobileMenu();
@@ -77,8 +100,7 @@ export const LeftSidebar = () => {
   const { favorites } = useFavorites();
   const [showFavorites, setShowFavorites] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
-  // const navigate = useNavigate();
-  // const { theme } = useTheme();
+  const navigate = useNavigate();
 
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedMood, setSelectedMood] = useState<Mood | null>(null);
@@ -90,7 +112,6 @@ export const LeftSidebar = () => {
     message: string;
     type: "success" | "error";
   } | null>(null);
-  const navigate = useNavigate();
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setStartX(e.touches[0].clientX);
@@ -134,19 +155,6 @@ export const LeftSidebar = () => {
   }, []);
 
   // Add this function inside LeftSidebar component
-  const getMoodBasedPrompt = (mood: Mood): string => {
-    const prompts: Record<string, string> = {
-      Happy:
-        "I'm feeling happy and energetic! What meals would keep my good mood going?",
-      Tired:
-        "I'm feeling tired and need an energy boost. What meals would help?",
-      Sad: "I'm feeling down today. What comfort food might cheer me up?",
-      Stressed:
-        "I'm stressed and need calming foods. What would you recommend?",
-      Neutral: "I'm looking for balanced meal options. What would you suggest?",
-    };
-    return prompts[mood.label] || prompts.Neutral;
-  };
 
   // Add this function to generate image using DALL-E
   const generateMealImage = async (
@@ -169,122 +177,115 @@ export const LeftSidebar = () => {
   };
 
   // Update parseMealsFromResponse to generate images
-  const parseMealsFromResponse = async (
-    response: string,
-    client: OpenAI
-  ): Promise<MealSuggestion[]> => {
+
+  const getMoodBasedMeals = async (mood: Mood) => {
     try {
-      const jsonMatch =
-        response.match(/```json\n([\s\S]*?)\n```/) ||
-        response.match(/\[([\s\S]*?)\]/);
-      const jsonStr = jsonMatch ? jsonMatch[1] : response;
+      setIsLoading(true);
 
-      const meals: ParsedMeal[] = JSON.parse(jsonStr);
+      const starknet = await connect();
+      if (!starknet) throw new Error("Failed to connect to StarkNet");
 
-      // Generate images for all meals in parallel
-      const mealsWithImages = await Promise.all(
-        meals.map(async (meal, index) => {
-          const imageUrl = await generateMealImage(client, meal);
-          return {
-            id: `meal-${index}`,
-            name: meal.name,
-            description: meal.description,
-            image: imageUrl,
-            // Convert USD price to BASE
-            price: formatBasePrice(meal.price),
-            emoji: meal.emoji,
-          };
-        })
+      await starknet.enable();
+      const account = starknet.account;
+      if (!account) throw new Error("Please connect your wallet first");
+
+      // Use restaurant service to get menu items
+      const CONTRACT_ADDRESS =
+        "0x01f0f631a3837ebe4747efef168dc9ef3837513ce37c637726ff183ea3740cbb";
+
+      const contract = new Contract(
+        [
+          {
+            name: "get_restaurant_menu",
+            type: "function",
+            inputs: [{ name: "restaurant_id", type: "core::integer::u64" }],
+            outputs: [
+              {
+                type: "core::array::Array::<(core::felt252, core::felt252, core::integer::u64, core::felt252, core::integer::u64)>",
+              },
+            ],
+            state_mutability: "view",
+          },
+        ],
+        CONTRACT_ADDRESS,
+        account
       );
 
-      return mealsWithImages;
-    } catch (error) {
-      console.error("Error parsing meals:", error);
-      return [];
-    }
-  };
-
-  // Update handleMoodSelection to use async parseMealsFromResponse
-  const handleMoodSelection = async (mood: Mood) => {
-    setSelectedMood(mood);
-    setIsLoading(true);
-    setMealSuggestions([]);
-
-    try {
-      const client = new OpenAI({
-        apiKey: import.meta.env.VITE_OPENAI_API_KEY,
-        dangerouslyAllowBrowser: true,
-      });
-
-      // Create assistant
-      const assistant = await createAssistant(client);
-
-      const prompt = getMoodBasedPrompt(mood);
-      const systemMessage = `Based on the user's mood, suggest 3-4 meals. Format your response as a JSON array of objects, each with: name, description, price, and an appropriate emoji. Example: [{"name": "Energy Bowl", "description": "Fresh quinoa bowl with avocado", "price": "$14.99", "emoji": "🥗"}]`;
-
-      // Create thread and add messages
-      const thread = await client.beta.threads.create();
-      await client.beta.threads.messages.create(thread.id, {
-        role: "user",
-        content: prompt,
-      });
-
-      // Create and run with the new assistant
-      const run = await client.beta.threads.runs.create(thread.id, {
-        assistant_id: assistant.id,
-        instructions: systemMessage,
-      });
-
-      const response = await ThreadManager.waitForResponse(
-        client,
-        thread.id,
-        run.id
+      // Get menus from all restaurants (you might want to limit this)
+      const restaurantIds = ["1", "2", "3"]; // Add your restaurant IDs
+      const allMenus = await Promise.all(
+        restaurantIds.map((id) => contract.get_restaurant_menu(id))
       );
-      const suggestions = await parseMealsFromResponse(response, client);
+
+      // Filter and transform menu items based on mood
+      const moodKeywords: Record<string, string[]> = {
+        Happy: ["energizing", "fresh", "vibrant", "colorful"],
+        Tired: ["energizing", "protein", "healthy", "boost"],
+        Sad: ["comfort", "warm", "sweet", "hearty"],
+        Stressed: ["calming", "healthy", "light", "fresh"],
+        Neutral: ["balanced", "nutritious", "classic"],
+      };
+
+      const keywords = moodKeywords[mood.label];
+
+      const suggestions = await Promise.all(
+        allMenus
+          .flat()
+          .filter((item) => {
+            const description = feltToString(item[1]).toLowerCase();
+            return keywords.some((keyword) => description.includes(keyword));
+          })
+          .map(async (item, index) => {
+            const name = feltToString(item[0]);
+            const description = feltToString(item[1]);
+            const contractImage = hexToString(item[3].toString());
+
+            // If contract image is empty or invalid, generate one using DALL-E
+            let imageUrl = contractImage;
+            if (!imageUrl || imageUrl === "") {
+              const client = new OpenAI({
+                apiKey: process.env.REACT_APP_OPENAI_API_KEY,
+              });
+              imageUrl = await generateMealImage(client, {
+                name,
+                description,
+                price: item[2].toString(),
+                emoji: "🍽️",
+              });
+            }
+
+            return {
+              id: index.toString(),
+              name,
+              description,
+              price: item[2].toString(),
+              imageUrl,
+              emoji: "🍽️",
+            };
+          })
+      );
 
       setMealSuggestions(suggestions);
-      setToast({
-        message: "Got your personalized suggestions!",
-        type: "success",
-      });
     } catch (error) {
-      console.error("Error getting meal suggestions:", error);
+      console.error("Error getting menu items:", error);
       setToast({
-        message: "Could not get meal suggestions. Try again?",
+        message: "Failed to fetch menu items. Please try again.",
         type: "error",
       });
-
-      // Fallback suggestions
-      setMealSuggestions([
-        {
-          id: "fallback-1",
-          name: "Comfort Bowl",
-          description: "A warm, nourishing bowl of goodness",
-          image: "/images/meals/comfort-bowl.jpg",
-          price: "0.0061 BASE", // Updated from $12.99
-          emoji: "🍜",
-        },
-        {
-          id: "fallback-2",
-          name: "Energy Plate",
-          description: "Fresh ingredients to boost your mood",
-          image: "/images/meals/energy-plate.jpg",
-          price: "0.0070 BASE", // Updated from $14.99
-          emoji: "🥗",
-        },
-        {
-          id: "fallback-3",
-          name: "Sweet Treat",
-          description: "A delightful dessert to lift your spirits",
-          image: "/images/meals/sweet-treat.jpg",
-          price: "0.0042 BASE", // Updated from $8.99
-          emoji: "🍰",
-        },
-      ]);
     } finally {
       setIsLoading(false);
     }
   };
+
+  const handleMoodSelection = async (mood: Mood) => {
+    setSelectedMood(mood);
+    await getMoodBasedMeals(mood);
+  };
+
+  const timeString = currentTime.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
   return (
     <>
@@ -300,7 +301,7 @@ export const LeftSidebar = () => {
             {/* Time Display */}
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-neon-blue">
-                {format(currentTime, "h:mm a")}
+                {timeString}
               </h2>
               <p className="text-light-gray">
                 Good {format(currentTime, "a") === "am" ? "Morning" : "Evening"}
@@ -352,7 +353,7 @@ export const LeftSidebar = () => {
                     >
                       <div className="relative h-32">
                         <img
-                          src={meal.image}
+                          src={meal.imageUrl}
                           alt={meal.name}
                           className="w-full h-full object-cover"
                         />

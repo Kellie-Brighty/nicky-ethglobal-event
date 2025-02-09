@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { XMarkIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useAccount, useBalance } from "wagmi";
 import { useCart } from "../../context/CartContext";
-import { useOrder } from "../../context/OrderContext";
+import { useOrders } from "../../context/OrderContext";
 
 interface CheckoutProps {
   isOpen: boolean;
@@ -14,7 +14,7 @@ export const Checkout: React.FC<CheckoutProps> = ({ isOpen, onClose }) => {
   const { address } = useAccount();
   const { data: balance } = useBalance({ address });
   const { items, total, clearCart } = useCart();
-  const { createOrder, confirmOrder, isProcessing } = useOrder();
+  const { createOrder, confirmOrder, isProcessing } = useOrders();
   const [deliveryAddress, setDeliveryAddress] = useState("");
 
   const handleCheckout = async () => {

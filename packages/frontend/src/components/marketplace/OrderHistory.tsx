@@ -4,15 +4,10 @@ import { useOrders } from "../../context/OrderContext";
 import {
   ClockIcon,
   CheckCircleIcon,
-  XCircleIcon,
   TruckIcon,
   MapPinIcon,
 } from "@heroicons/react/24/outline";
 
-interface OrderStatus {
-  status: "preparing" | "on-the-way" | "delivered";
-  timestamp: Date;
-}
 
 const statusConfig = {
   preparing: {
@@ -35,9 +30,11 @@ const statusConfig = {
   },
 };
 
-const OrderTracker: React.FC<{ status: OrderStatus }> = ({ status }) => {
+const OrderTracker: React.FC<{
+  status: "preparing" | "on-the-way" | "delivered";
+}> = ({ status }) => {
   const steps = ["preparing", "on-the-way", "delivered"];
-  const currentIdx = steps.indexOf(status.status);
+  const currentIdx = steps.indexOf(status);
 
   return (
     <div className="relative mt-4">

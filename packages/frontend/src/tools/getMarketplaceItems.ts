@@ -1,5 +1,5 @@
 import { ToolConfig } from "./allTools";
-import { MENU_ITEMS, MARKETPLACE_TABS } from "../data/products";
+import { MENU_ITEMS } from "../data/products";
 
 interface MarketplaceQueryParams {
   category?: string; // e.g., "featured", "popular", "restaurants"

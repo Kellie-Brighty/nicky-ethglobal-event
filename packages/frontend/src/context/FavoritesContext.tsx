@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { FavoriteMeal, OrderItem } from "../types";
+import { MenuItem } from "../types/marketplace";
 import { AddToFavoritesPrompt } from "../components/AddToFavoritesPrompt";
 
 interface FavoritesContextType {
   favorites: FavoriteMeal[];
-  addToFavorites: (meal: FavoriteMeal) => void;
+  addToFavorites: (meal: MenuItem) => void;
   removeFromFavorites: (id: string) => void;
   isInFavorites: (id: string) => boolean;
   showAddToFavoritesPrompt: (order: OrderItem) => void;
@@ -35,11 +36,16 @@ export const FavoritesProvider = ({
     localStorage.setItem("favorites", JSON.stringify(favorites));
   }, [favorites]);
 
-  const addToFavorites = (meal: FavoriteMeal) => {
-    setFavorites((prev) => {
-      if (prev.some((f) => f.id === meal.id)) return prev;
-      return [...prev, meal];
-    });
+  const addToFavorites = (item: MenuItem) => {
+    const favorite: FavoriteMeal = {
+      id: item.id,
+      name: item.name,
+      description: item.description ?? "",
+      price: item.price,
+      image: item.image,
+      imageUrl: item.image,
+    };
+    setFavorites((prev) => [...prev, favorite]);
   };
 
   const removeFromFavorites = (id: string) => {
@@ -72,10 +78,16 @@ export const FavoritesProvider = ({
             addToFavorites({
               id: pendingOrder.id,
               name: pendingOrder.name,
-              description: pendingOrder.description,
-              timestamp: Date.now(),
-              imageUrl: pendingOrder.imageUrl,
+              description: pendingOrder.description ?? "",
               price: pendingOrder.price,
+              image: pendingOrder.imageUrl ?? "",
+              images: [pendingOrder.imageUrl ?? ""],
+              imageKey: pendingOrder.id,
+              rating: 0,
+              prepTime: 0,
+              minOrder: 0,
+              restaurantId: "",
+              categoryId: "",
             });
             setPendingOrder(null);
           }}

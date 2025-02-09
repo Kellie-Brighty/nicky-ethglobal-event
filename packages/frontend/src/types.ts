@@ -15,9 +15,11 @@ export interface FavoriteMeal {
 
   name: string;
 
+  description?: string;
+
   price: string;
 
-  description: string;
+  image?: string;
 
   imageUrl?: string;
 

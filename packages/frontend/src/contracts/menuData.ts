@@ -1,4 +1,3 @@
-import React from "react";
 
 interface MenuItems {
     id: string;
@@ -62,7 +61,6 @@ export const fetchAllMenuItems = async (): Promise<MenuItems[]> => {
             return [];
         }
 
-        const numRestaurants = parseInt(data.result[0].replace("0x", ""), 16);
         const restaurants: MenuItems[] = [];
         for (let i = 1; i < data.result.length; i += 4) {
             if (i + 3 >= data.result.length) break;

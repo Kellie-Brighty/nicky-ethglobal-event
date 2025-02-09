@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import Hero from "../components/landing/Hero";
 import { useAccount } from "@starknet-react/core";
 import { useLocation, useNavigate } from "react-router-dom";

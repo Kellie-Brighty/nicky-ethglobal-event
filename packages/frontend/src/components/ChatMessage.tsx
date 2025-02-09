@@ -1,6 +1,6 @@
-import ReactMarkdown from "react-markdown";
-import { ImageViewer } from "./ImageViewer";
-import { FoodItemSlider } from "./chat/FoodItemSlider";
+// import ReactMarkdown from "react-markdown";
+// import { ImageViewer } from "./ImageViewer";
+// import { FoodItemSlider } from "./chat/FoodItemSlider";
 import React from "react";
 import { motion } from "framer-motion";
 

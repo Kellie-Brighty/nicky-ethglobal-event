@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
-import { Restaurant, Product, PRODUCTS } from "../../data/products";
-import { TabView, Tab } from "./TabView";
+import { Restaurant } from "../../data/products";
+import { MenuItem } from "../../types/marketplace";
+import { PRODUCTS } from "../../data/products";
+import { TabView, type Tab } from "./TabView";
 import { ProductCard } from "./ProductCard";
 import { ProductDetail } from "./ProductDetail";
 
@@ -17,7 +19,7 @@ export const RestaurantView: React.FC<RestaurantViewProps> = ({
   const [activeCategory, setActiveCategory] = useState<string>(
     restaurant.categories[0].id
   );
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<MenuItem | null>(null);
 
   const categoryTabs: Tab[] = restaurant.categories.map((cat) => ({
     id: cat.id,
@@ -25,7 +27,7 @@ export const RestaurantView: React.FC<RestaurantViewProps> = ({
   }));
 
   const restaurantProducts = PRODUCTS.filter(
-    (product) =>
+    (product: MenuItem) =>
       product.restaurantId === restaurant.id &&
       product.categoryId === activeCategory
   );

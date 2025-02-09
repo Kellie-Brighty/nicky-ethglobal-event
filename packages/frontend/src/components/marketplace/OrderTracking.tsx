@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useOrders } from "../../context/OrderContext";
-import {
-  ClockIcon,
-  CheckCircleIcon,
-  TruckIcon,
-  BeakerIcon,
-  MapPinIcon,
-} from "@heroicons/react/24/outline";
+import { ClockIcon, TruckIcon, MapPinIcon } from "@heroicons/react/24/outline";
 
 interface OrderTrackingProps {
   isCartSidebarOpen: boolean;
@@ -25,7 +19,7 @@ export const OrderTracking: React.FC<OrderTrackingProps> = ({
   const { orders, updateOrderStatus } = useOrders();
   const order = orders.find((o) => o.id === orderId);
   const [progress, setProgress] = useState(0);
-  const [isFlashing, setIsFlashing] = useState(false);
+  const [_, setIsFlashing] = useState(false);
 
   useEffect(() => {
     if (order?.status === "on-the-way") {
@@ -55,14 +49,14 @@ export const OrderTracking: React.FC<OrderTrackingProps> = ({
 
   if (!order) return null;
 
-  const steps = [
-    { id: "confirmed", label: "Order Confirmed", icon: CheckCircleIcon },
-    { id: "preparing", label: "Preparing", icon: BeakerIcon },
-    { id: "delivering", label: "Out for Delivery", icon: TruckIcon },
-    { id: "completed", label: "Delivered", icon: CheckCircleIcon },
-  ];
+  // const steps = [
+  //   { id: "confirmed", label: "Order Confirmed", icon: CheckCircleIcon },
+  //   { id: "preparing", label: "Preparing", icon: BeakerIcon },
+  //   { id: "delivering", label: "Out for Delivery", icon: TruckIcon },
+  //   { id: "completed", label: "Delivered", icon: CheckCircleIcon },
+  // ];
 
-  const currentStepIndex = steps.findIndex((step) => step.id === order.status);
+  // const currentStepIndex = steps.findIndex((step) => step.id === order.status);
 
   // Calculate right margin based on open sidebars
   const getRightMargin = () => {

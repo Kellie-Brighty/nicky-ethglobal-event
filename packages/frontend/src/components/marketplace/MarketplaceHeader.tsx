@@ -3,7 +3,7 @@ import {
   ShoppingCartIcon,
   ClockIcon,
 } from "@heroicons/react/24/outline";
-import { MARKETPLACE_TABS, Tab } from "../../data/products";
+import {  Tab } from "../../data/products";
 
 interface MarketplaceHeaderProps {
   activeTab: string;

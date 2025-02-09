@@ -1,19 +1,20 @@
 import React, { createContext, useContext, useState } from "react";
 import { MENU_ITEMS } from "../data/products";
-import type { MenuItem } from "../data/products";
 
-interface FilterContextType {
+interface FilterContextType<T> {
   selectedCategories: string[];
   selectedPriceRange: { min: number; max: number } | null;
   searchQuery: string;
   toggleCategory: (category: string) => void;
   setPriceRange: (range: { min: number; max: number } | null) => void;
   setSearchQuery: (query: string) => void;
-  filteredProducts: MenuItem[];
+  filteredProducts: T[];
   clearFilters: () => void;
 }
 
-const FilterContext = createContext<FilterContextType | undefined>(undefined);
+const FilterContext = createContext<FilterContextType<any> | undefined>(
+  undefined
+);
 
 export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -58,7 +59,7 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({
     // Category filter
     const matchesCategory =
       selectedCategories.length === 0 ||
-      selectedCategories.includes(product.category);
+      selectedCategories.includes(product.categoryId);
 
     // Price filter
     const price = parseFloat(product.price.replace(" ETH", ""));
@@ -87,10 +88,10 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
-export const useFilter = () => {
+export const useFilter = <T,>() => {
   const context = useContext(FilterContext);
-  if (context === undefined) {
-    throw new Error("useFilter must be used within a FilterProvider");
+  if (!context) {
+    throw new Error("useFilter must be used within FilterProvider");
   }
-  return context;
+  return context as FilterContextType<T>;
 };

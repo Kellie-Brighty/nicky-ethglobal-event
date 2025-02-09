@@ -1,6 +1,6 @@
 import { useAccount, useConnect } from "@starknet-react/core";
 
-export const OrderButton = ({ item }) => {
+export const OrderButton = ({  }) => {
   const { address } = useAccount();
   const { connect } = useConnect();
 

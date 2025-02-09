@@ -1,20 +1,24 @@
 import React, { createContext, useContext, useState } from "react";
-import { Product } from "../types";
 import { CartItemType } from "./CartContext";
 
-interface Order {
+export interface Order {
   id: string;
   items: CartItemType[];
   total: string;
   status: "preparing" | "on-the-way" | "delivered";
   timestamp: Date;
   deliveryAddress: string;
+  estimatedDeliveryTime: string;
 }
 
 interface OrderContextType {
   orders: Order[];
-  addOrder: (items: CartItemType[], total: string) => void;
+  createOrder: (items: CartItemType[], total: string) => void;
+  confirmOrder: () => Promise<void>;
   updateOrderStatus: (orderId: string, status: Order["status"]) => void;
+  addOrder: (order: Order) => void;
+  isProcessing: boolean;
+  error: Error | null;
 }
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
@@ -23,26 +27,31 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
-  const addOrder = (items: CartItemType[], total: string) => {
+  const createOrder = (items: CartItemType[], total: string) => {
     const newOrder: Order = {
-      id: `ORD${Math.random().toString(36).substr(2, 9)}`,
+      id: crypto.randomUUID(),
       items,
       total,
       status: "preparing",
       timestamp: new Date(),
-      deliveryAddress: "123 Cyber Street, Neo City", // You can make this dynamic
+      deliveryAddress: "",
+      estimatedDeliveryTime: "15-20 mins",
     };
-
     setOrders((prev) => [newOrder, ...prev]);
+  };
 
-    // Simulate order progress
-    setTimeout(() => {
-      updateOrderStatus(newOrder.id, "on-the-way");
-      setTimeout(() => {
-        updateOrderStatus(newOrder.id, "delivered");
-      }, 10000);
-    }, 5000);
+  const confirmOrder = async () => {
+    setIsProcessing(true);
+    try {
+      // Implementation
+    } catch (err) {
+      setError(err as Error);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const updateOrderStatus = (orderId: string, status: Order["status"]) => {
@@ -51,8 +60,22 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({
     );
   };
 
+  const addOrder = (order: Order) => {
+    setOrders((prev) => [...prev, order]);
+  };
+
   return (
-    <OrderContext.Provider value={{ orders, addOrder, updateOrderStatus }}>
+    <OrderContext.Provider
+      value={{
+        orders,
+        createOrder,
+        confirmOrder,
+        updateOrderStatus,
+        addOrder,
+        isProcessing,
+        error,
+      }}
+    >
       {children}
     </OrderContext.Provider>
   );

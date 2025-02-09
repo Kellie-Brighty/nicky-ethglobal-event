@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import {
   XMarkIcon,
   HeartIcon,
@@ -8,12 +8,12 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@heroicons/react/24/outline";
-import { Product } from "../../data/products";
+import { MenuItem } from "../../types/marketplace";
 import { useCart } from "../../context/CartContext";
 import { useFavorites } from "../../context/FavoritesContext";
 
 interface ProductDetailProps {
-  product: Product;
+  product: MenuItem;
   onClose: () => void;
 }
 
@@ -24,7 +24,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { addToCart } = useCart();
   const { addToFavorites, isInFavorites } = useFavorites();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleImageChange = (direction: "next" | "prev") => {
     if (direction === "next") {
@@ -55,7 +55,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({
             <AnimatePresence initial={false}>
               <motion.img
                 key={currentImageIndex}
-                src={product.images[currentImageIndex]}
+                src={product.image}
                 alt={product.name}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -99,7 +99,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({
               </button>
             </div>
 
-            <p className="text-light-gray/80 mb-6">{product.longDescription}</p>
+            <p className="text-light-gray/80 mb-6">{product.description}</p>
 
             {product.ingredients && (
               <div className="mb-6">
