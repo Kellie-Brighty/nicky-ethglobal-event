@@ -18,6 +18,7 @@ import { FilterProvider } from "./context/FilterContext";
 import { OrderProvider } from "./context/OrderContext";
 import { StarknetProvider } from "./components/providers/StarknetProvider";
 import { useAccount, useConnect } from "@starknet-react/core";
+import AddRestaurant from "./pages/AddRestaurant";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -28,21 +29,15 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { connectors, connect } = useConnect();
 
   const handleConnect = async () => {
-    const argentConnector = connectors.find((c) => c.id === "argentX");
-    if (argentConnector) {
+    const braavosConnector = connectors.find((c) => c.id === "braavos");
+    if (braavosConnector) {
       try {
-        const connectPromise = connect({ connector: argentConnector });
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Connection timeout")), 30000)
-        );
-
-        await Promise.race([connectPromise, timeoutPromise]);
+        await connect({ connector: braavosConnector });
       } catch (err: unknown) {
-        console.error("Failed to connect:", err);
-        if (err instanceof Error && err.message === "Connection timeout") {
-          console.log("Connection timed out. Please try again.");
-        }
+        console.error("Failed to connect Braavos wallet:", err);
       }
+    } else {
+      console.error("Please install Braavos wallet");
     }
   };
 
@@ -51,24 +46,20 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
       <div className="min-h-screen flex flex-col items-center justify-center bg-dark-primary">
         <div className="text-center p-8 rounded-lg">
           <h2 className="text-2xl font-bold text-light-gray mb-2">
-            Disconnected from Wallet
+            Connect Braavos Wallet
           </h2>
-          <p className="text-light-gray/60">
-            Please reconnect your wallet to access the dashboard
+          <p className="text-light-gray/60 mb-4">
+            Please connect your Braavos wallet to access the dashboard
           </p>
           <button
             onClick={handleConnect}
             className="mt-4 px-6 py-2 bg-neon-blue text-black rounded-lg hover:bg-neon-blue/90 transition-colors"
           >
-            Reconnect Wallet
+            Connect Braavos
           </button>
         </div>
       </div>
     );
-  }
-
-  if (!address) {
-    return <Navigate to="/" replace />;
   }
 
   return <>{children}</>;
@@ -96,6 +87,7 @@ function App() {
                           }
                         />
                         <Route path="/marketplace" element={<Marketplace />} />
+                        <Route path="/add" element={<AddRestaurant/>}></Route>
                       </Routes>
                     </Router>
                   </MobileMenuProvider>

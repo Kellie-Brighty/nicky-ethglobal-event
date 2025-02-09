@@ -33,7 +33,13 @@ export const WalletHeader = () => {
   };
 
   const handleDisconnect = () => {
+    // Only clear wallet connection state
+    localStorage.removeItem("walletConnected");
+
+    // Disconnect wallet
     disconnect();
+
+    // Navigate to home page
     navigate("/");
   };
 
@@ -80,7 +86,7 @@ export const WalletHeader = () => {
               onClick={handleConnect}
               className="px-4 py-2 rounded-lg bg-neon-blue text-black"
             >
-              Connect Wallet
+              Connect Braavos
             </button>
           ) : (
             <div className="flex items-center gap-2">
