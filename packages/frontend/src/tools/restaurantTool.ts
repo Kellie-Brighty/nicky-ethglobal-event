@@ -16,6 +16,30 @@ const hexToString = (hex: string): string => {
   }
 };
 
+function feltToString(felt: bigint): string {
+  let hex = felt.toString(16); // Convert BigInt to hex string
+
+  // Ensure hex string has even length (each byte should be 2 hex characters)
+  if (hex.length % 2 !== 0) {
+    hex = "0" + hex;
+  }
+
+  // Convert hex to ASCII string
+  return (
+    hex
+      .match(/.{1,2}/g) // Split into 2-character chunks
+      ?.map((byte) => String.fromCharCode(parseInt(byte, 16))) // Convert each to char
+      .join("") || ""
+  ); // Join chars into a readable string
+}
+
+interface Restaurant {
+  0: bigint; // name
+  1: bigint; // location
+  2: bigint; // contractAddress
+  3: bigint; // imageUrl
+}
+
 export const restaurantTool: ToolConfig = {
   definition: {
     type: "function",
@@ -123,36 +147,43 @@ export const restaurantTool: ToolConfig = {
       if (action === "list_restaurants") {
         const restaurants = await contract.get_all_restaurants();
         console.log("restaurants", restaurants);
-        const processedRestaurants = [] as any;
-        for (let i = 1; i < restaurants.length; i += 4) {
-          if (i + 3 >= restaurants.length) break;
+        // const processedRestaurants = [] as any;
 
-          const nameFelt = restaurants[i];
-          const locationFelt = restaurants[i + 1];
-          const contractAddressFelt = restaurants[i + 2];
-          const imageUrlHashFelt = restaurants[i + 3];
+        const processedRestaurants = restaurants.map(
+          (restaurant: Restaurant, index: number) => {
+            return {
+              id: (index + 1).toString(), // Convert index to readable ID
+              name: feltToString(restaurant[0]), // Convert name from Felt
+              location: feltToString(restaurant[1]), // Convert location from Felt
+              contractAddress: `0x${restaurant[2].toString(16)}`, // Convert contract address to hex
+              imageUrl: hexToString(restaurant[3].toString()), // Convert image hash to hex
+            };
+          }
+        );
 
-          const name = hexToString(nameFelt);
-          const location = hexToString(locationFelt);
-          const contractAddress = contractAddressFelt;
-          const imageUrlHash = parseInt(imageUrlHashFelt.replace("0x", ""), 16);
+        console.log(processedRestaurants);
 
-          const id = (Math.floor((i - 1) / 4) + 1).toString();
-
-          processedRestaurants.push({
-            id,
-            name,
-            location,
-            contractAddress,
-            imageUrl: imageUrlHash.toString(),
-          });
-        }
         return { success: true, processedRestaurants };
       }
 
       if (action === "view_menu" && restaurant_id) {
         const menu = await contract.get_restaurant_menu(restaurant_id);
-        return { success: true, menu };
+        const processedMenus = menu.map(
+            (restaurant: Restaurant, index: number) => {
+              return {
+                id: (index + 1).toString(), // Convert index to readable ID
+                name: feltToString(restaurant[0]), // Convert name from Felt
+                description: feltToString(restaurant[1]), // Convert location from Felt
+                price: `0x${restaurant[2].toString(16)}`, // Convert contract address to hex
+                imageUrl: hexToString(restaurant[3].toString()), // Convert image hash to hex
+              };
+            }
+          );
+
+        console.log(processedMenus);
+
+        return { success: true, menu: processedMenus };
+
       }
 
       if (action === "place_order" && restaurant_id && total_price) {
@@ -162,6 +193,7 @@ export const restaurantTool: ToolConfig = {
           total_price,
           customer
         );
+        console.log("order", order);
         return { success: true, order_id: order[0] };
       }
 
