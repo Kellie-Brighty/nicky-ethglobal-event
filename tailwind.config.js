@@ -18,6 +18,16 @@ module.exports = {
         "neon-blue": "#00f2fe",
         "neon-green": "#39ff14",
       },
+      animation: {
+        gradientFlow: "gradientFlow 5s linear infinite",
+      },
+      keyframes: {
+        gradientFlow: {
+          "0%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "150% 50%" },
+          "100%": { backgroundPosition: "0% 50%" },
+        },
+      },
     },
   },
   plugins: [],

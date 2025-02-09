@@ -28,7 +28,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages }) => {
             }`}
           >
             <div
-              className={`p-4 rounded-2xl ${
+              className={`p-4 rounded-2xl whitespace-pre-wrap break-words ${
                 message.role === "assistant"
                   ? "bg-dark-secondary text-light-gray shadow-lg border border-neon-blue/20"
                   : "bg-gradient-to-br from-neon-blue to-neon-green text-black shadow-lg"
@@ -42,9 +42,9 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages }) => {
                 />
               )}
               <ReactMarkdown
-                className={`prose prose-sm max-w-none ${
+                className={`prose prose-sm max-w-none break-words ${
                   message.role === "assistant"
-                    ? "prose-invert text-left"
+                    ? "prose-invert text-left prose-a:text-neon-blue hover:prose-a:text-neon-blue/80"
                     : "prose-p:text-white prose-white"
                 }`}
               >

@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useConnect, useAccount } from "@starknet-react/core";
-import nataLogo from "../../assets/images/nata-logo.jpg";
+import nataAvatar from "../../assets/images/natavatar-nobg.png";
 
 const FloatingElement: React.FC<{
   className: string;
@@ -34,24 +34,32 @@ const Hero: React.FC = () => {
   const { address, status } = useAccount();
 
   const handleConnect = async () => {
-    const argentConnector = connectors.find((c) => c.id === "braavos");
-    console.log("connectors", argentConnector);
-    if (argentConnector) {
-      try {
-        const connectPromise = connect({ connector: argentConnector });
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Connection timeout")), 30000)
-        );
+    const braavosConnector = connectors.find((c) => c.id === "braavos");
+    if (!braavosConnector) {
+      console.error("Please install Braavos wallet");
+      return;
+    }
 
-        await Promise.race([connectPromise, timeoutPromise]);
-      } catch (err: unknown) {
-        console.error("Failed to connect:", err);
-        if (err instanceof Error && err.message === "Connection timeout") {
-          console.log("Connection timed out. Please try again.");
-        }
-      }
+    try {
+      await connect({ connector: braavosConnector });
+      localStorage.setItem("walletConnected", "true");
+    } catch (err: unknown) {
+      console.error("Failed to connect Braavos wallet:", err);
     }
   };
+
+  // Check connection on mount
+  React.useEffect(() => {
+    const checkConnection = async () => {
+      if (
+        status === "disconnected" &&
+        localStorage.getItem("walletConnected")
+      ) {
+        handleConnect();
+      }
+    };
+    checkConnection();
+  }, [status]);
 
   React.useEffect(() => {
     if (status === "connected" && address) {
@@ -250,11 +258,16 @@ const Hero: React.FC = () => {
         >
           {/* Animated tech elements above title */}
           <motion.div
-            className="text-neon-blue/60 text-sm tracking-[0.3em] mb-4 font-mono"
+            className="text-neon-blue/60 text-sm tracking-[0.3em] mb-4 font-mono flex items-center gap-2"
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
             POWERED BY NATA
+            <img
+              src={nataAvatar}
+              alt="NATA Avatar"
+              className="w-14 h-14 rounded-full object-cover"
+            />
           </motion.div>
 
           <motion.h1
@@ -264,7 +277,7 @@ const Hero: React.FC = () => {
             transition={{ duration: 1.2 }}
           >
             <span className="relative">
-              <span className="text-neon-blue relative z-10">Next-Gen</span>
+              <span className="text-neon-blue relative z-10">Trex-Food</span>
               <motion.span
                 className="absolute -inset-1 bg-neon-blue/20 blur-lg"
                 animate={{ opacity: [0.5, 1, 0.5] }}

@@ -4,7 +4,8 @@ import { Bars3Icon } from "@heroicons/react/24/outline";
 import { useMobileMenu } from "../context/MobileMenuContext";
 import { useAccount, useConnect, useDisconnect } from "@starknet-react/core";
 import { useNavigate } from "react-router-dom";
-import nataLogo from "../assets/images/nata-logo.jpg";
+import { motion } from "framer-motion";
+import nataAvatar from "../assets/images/natavatar-nobg.png";
 
 export const WalletHeader = () => {
   const { toggleMenu } = useMobileMenu();
@@ -32,19 +33,44 @@ export const WalletHeader = () => {
   };
 
   const handleDisconnect = () => {
+    // Only clear wallet connection state
+    localStorage.removeItem("walletConnected");
+
+    // Disconnect wallet
     disconnect();
+
+    // Navigate to home page
     navigate("/");
   };
 
   return (
     <header className="flex items-center justify-between px-6 py-3 bg-dark-primary border-b border-neon-blue/10">
       <div className="flex items-center gap-6">
-        <img
-          src={nataLogo}
-          alt="Nata"
-          className="h-12 w-auto object-contain hover:opacity-90 transition-opacity cursor-pointer"
-          onClick={() => navigate("/")}
-        />
+        <div className="flex items-center justify-center">
+          <img
+            src={nataAvatar}
+            alt="Nata"
+            className="h-16 w-auto object-contain hover:opacity-90 transition-opacity cursor-pointer"
+            onClick={() => navigate("/")}
+          />
+          <motion.h1
+            className="text-xl md:text-2xl font-bold"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2 }}
+          >
+            <span className="relative">
+              <span className="relative z-10 bg-gradient-to-r from-neon-blue via-purple-500 to-neon-green bg-clip-text text-transparent bg-[length:300%] animate-gradientFlow">
+                Trex-Food
+              </span>
+              <motion.span
+                className="absolute -inset-1 bg-gradient-to-r from-neon-blue/30 via-purple-500/30 to-neon-green/30 blur-lg opacity-75 group-hover:opacity-100 transition-all duration-300"
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+            </span>
+          </motion.h1>
+        </div>
         <button
           onClick={toggleMenu}
           className="p-2 hover:bg-dark-secondary rounded-lg transition-colors lg:hidden"
@@ -60,7 +86,7 @@ export const WalletHeader = () => {
               onClick={handleConnect}
               className="px-4 py-2 rounded-lg bg-neon-blue text-black"
             >
-              Connect Wallet
+              Connect Braavos
             </button>
           ) : (
             <div className="flex items-center gap-2">
