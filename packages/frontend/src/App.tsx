@@ -12,6 +12,7 @@ import { FilterProvider } from "./context/FilterContext";
 import { OrderProvider } from "./context/OrderContext";
 import { StarknetProvider } from "./components/providers/StarknetProvider";
 import { useAccount, useConnect } from "@starknet-react/core";
+import AddRestaurant from "./pages/AddRestaurant";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -80,6 +81,7 @@ function App() {
                           }
                         />
                         <Route path="/marketplace" element={<Marketplace />} />
+                        <Route path="/add" element={<AddRestaurant/>}></Route>
                       </Routes>
                     </Router>
                   </MobileMenuProvider>
