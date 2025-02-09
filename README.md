@@ -35,5 +35,5 @@ TrexFood is a next-generation food delivery platform powered by Nata, an AI assi
 ```bash
 git clone https://github.com/trex-Tech/nicky-ethglobal-event.git
 cd TrexFood
-npm install
+npm install or yarn install or bun install or pnpm install
 ```
